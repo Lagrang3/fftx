@@ -3,6 +3,8 @@ project('fftx','cpp',
         'warning_level=3','optimization=3'],
         version: '0.0.1')
 
+fftw3_dep = dependency('fftw3')
+
 headers=[]
 test_src=[]
 
