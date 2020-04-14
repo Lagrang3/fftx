@@ -22,8 +22,8 @@ int main()
     int n, N = 1;
     cin >> n;
 
-    while (N < n)
-        N <<= 1;
+    // while (N < n) N <<= 1;
+    N = n;
 
     vector<cd> A(N, 0);
 

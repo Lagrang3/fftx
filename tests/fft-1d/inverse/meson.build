@@ -16,7 +16,7 @@ test_src += [files (
 generator = find_program('gen_test.py')
 
 test_files = custom_target('test-files',
-  output : ['01.in','02.in','03.in','04.in','05.in'],
+  output : ['01.in','02.in','03.in','04.in','05.in','06.in','07.in','08.in'],
   command : [generator,'@OUTDIR@'])
 
 foreach _t : test_files.to_list()

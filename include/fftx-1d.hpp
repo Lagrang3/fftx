@@ -6,23 +6,7 @@
 #include <fftw3.h>
 #include <vector>
 
-/*
-    Fast power
-    O(Log n)
-*/
-
-template <class T>
-T power(const T& x, int n, const T& I = T(1))
-{
-    T r = I, aux = x;
-    for (; n; n >>= 1)
-    {
-        if (n & 1)
-            r *= aux;
-        aux *= aux;
-    }
-    return r;
-}
+#include <fftx-math.hpp>
 
 /*
     Brute force implementation of the Discrete Fourier transform.
@@ -62,25 +46,41 @@ std::vector<T> FFT_DivideAndConquer(const std::vector<T>& A,
                                     const T _1 = T(1))
 {
     const int n = A.size();
-    assert(__builtin_popcount(n) == 1);
 
     if (n == 1)
         return A;
 
-    std::vector<T> B(n), A0(n / 2), A1(n / 2);
+    const int p = prime_factor(n);
 
-    for (int i = 0; i < n / 2; ++i)
-        A0[i] = A[2 * i], A1[i] = A[2 * i + 1];
+    if (p == n)
+        return FFT_BruteForce(A, e, _1);
 
-    auto B0 = FFT_DivideAndConquer(A0, e * e, _1);
-    auto B1 = FFT_DivideAndConquer(A1, e * e, _1);
+    const int m = n / p;
+    const auto ep = power(e, p);
 
-    T ei = _1, f = power(e, n / 2, _1);
+    std::vector<T> B(n);
+    std::vector<std::vector<T>> A_sub(p);
 
-    for (int i = 0; i < n / 2; ++i, ei *= e)
+    for (int i = 0; i < p; ++i)
     {
-        B[i] = B0[i] + B1[i] * ei;
-        B[i + n / 2] = B0[i] + B1[i] * ei * f;
+        std::vector<T> tmp(m);
+        for (int j = 0; j < m; ++j)
+            tmp[j] = A[j * p + i];
+
+        A_sub[i] = FFT_DivideAndConquer(tmp, ep, _1);
+    }
+
+    T ek = _1;
+    for (int k = 0; k < n; ++k)
+    {
+        B[k] = T(0);
+        T eki = _1;
+        for (int i = 0; i < p; ++i)
+        {
+            B[k] += A_sub[i][k % m] * eki;
+            eki *= ek;
+        }
+        ek *= e;
     }
 
     return B;

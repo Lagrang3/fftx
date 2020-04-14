@@ -22,9 +22,12 @@ int main()
     int n, N = 1;
     cin >> n;
 
+    /*
     while (N < n)
         N <<= 1;
     N <<= 1;
+    */
+    N = n * 2;
 
     vector<cd> A(N, 0), B(N, 0), C(N);
 
