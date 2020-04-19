@@ -22,8 +22,8 @@ int main()
     int n, N = 1;
     cin >> n;
 
-    while (N < n)
-        N <<= 1;
+    N = n;
+    // while (N < n)N <<= 1;
     N <<= 1;
 
     vector<cd> A(N, 0), B(N, 0), C(N);
@@ -51,14 +51,14 @@ int main()
     // done
 
     // FFT-based convolution
-    auto FA = FFT_InPlace(A, cd(cos(2 * PI / N), sin(2 * PI / N)));
-    auto FB = FFT_InPlace(B, cd(cos(2 * PI / N), sin(2 * PI / N)));
+    auto FA = FFT_Iterative(A, cd(cos(2 * PI / N), sin(2 * PI / N)));
+    auto FB = FFT_Iterative(B, cd(cos(2 * PI / N), sin(2 * PI / N)));
 
     vector<cd> FC(N, 0);
     for (int i = 0; i < N; ++i)
         FC[i] = FA[i] * FB[i];
 
-    auto C2 = FFT_InPlace(FC, cd(cos(2 * PI / N), -sin(2 * PI / N)));
+    auto C2 = FFT_Iterative(FC, cd(cos(2 * PI / N), -sin(2 * PI / N)));
     double inv_n = 1.0 / N;
     for (auto& x : C2)
         x *= inv_n;

@@ -36,13 +36,13 @@ double test_fftw(const vector<cd>& data, size_t N, int R)
         auto t1 = high_resolution_clock::now();
         fftw_execute(p);
         auto dt = high_resolution_clock::now() - t1;
-        T += duration_cast<milliseconds>(dt).count();
+        T += duration_cast<microseconds>(dt).count();
     }
     fftw_free(in);
     fftw_free(out);
     fftw_destroy_plan(p);
 
-    return T / R;
+    return T / R / 1000;
 }
 
 template <class Ftype>
@@ -58,7 +58,7 @@ double test_mylib(const vector<cd>& data, size_t N, int R, Ftype F)
         auto t1 = high_resolution_clock::now();
         F(A, e, cd(1));
         auto dt = high_resolution_clock::now() - t1;
-        T += duration_cast<milliseconds>(dt).count();
+        T += duration_cast<microseconds>(dt).count();
     }
     /*
     template <class T>
@@ -74,7 +74,7 @@ double test_mylib(const vector<cd>& data, size_t N, int R, Ftype F)
                                  const T e,
                                  const T _1 = T(1))
     */
-    return T / R;
+    return T / R / 1000;
 }
 
 int main()
@@ -88,7 +88,7 @@ int main()
 
     for (int N = 1 << 8, R; N < 2000; N *= 4)
     {
-        R = Nmax / N;
+        R = 100;
         cout << "N = " << N << '\n';
         cout << setw(30) << left << "FFTW: " << test_fftw(data, N, R)
              << " ms\n";
@@ -97,20 +97,26 @@ int main()
         cout << setw(30) << left << "MyFFT DivideAndConquer: "
              << test_mylib(data, N, R, FFT_DivideAndConquer<cd>) << " ms\n";
         cout << setw(30) << left
-             << "MyFFT InPlace: " << test_mylib(data, N, R, FFT_Iterative<cd>)
+             << "MyFFT InPlace: " << test_mylib(data, N, R, FFT_InPlace<cd>)
+             << " ms\n";
+        cout << setw(30) << left
+             << "MyFFT Iterative: " << test_mylib(data, N, R, FFT_Iterative<cd>)
              << " ms\n";
         cout << "\n\n";
     }
     for (int N = 1 << 14, R; N <= Nmax; N *= 4)
     {
-        R = Nmax / N;
+        R = 10;
         cout << "N = " << N << '\n';
         cout << setw(30) << left << "FFTW: " << test_fftw(data, N, R)
              << " ms\n";
         cout << setw(30) << left << "MyFFT DivideAndConquer: "
              << test_mylib(data, N, R, FFT_DivideAndConquer<cd>) << " ms\n";
         cout << setw(30) << left
-             << "MyFFT InPlace: " << test_mylib(data, N, R, FFT_Iterative<cd>)
+             << "MyFFT InPlace: " << test_mylib(data, N, R, FFT_InPlace<cd>)
+             << " ms\n";
+        cout << setw(30) << left
+             << "MyFFT Iterative: " << test_mylib(data, N, R, FFT_Iterative<cd>)
              << " ms\n";
         cout << "\n\n";
     }

@@ -88,10 +88,11 @@ std::vector<T> FFT_DivideAndConquer(const std::vector<T>& A,
 
 /*
     In-place FFT
+    !!! n must be a power of 2 and e must be and n-root of unity (_1)
 */
 
 template <class iter, class T>
-void FFT(iter first, iter last, const T e, const T _1 = T(1))
+void FFT_InPlace(iter first, iter last, const T e, const T _1 = T(1))
 {
     const int n = std::distance(first, last);
     assert(__builtin_popcount(n) == 1);
@@ -134,18 +135,74 @@ void FFT(iter first, iter last, const T e, const T _1 = T(1))
         }
     }
 }
-
 /*
     Divide and Conquer algorithm to compute the Discrete Fourier Transform:
     aka Fast Fourier Transform.
-    !!! n must be a power of 2 and e must be and n-root of unity (_1)
+    In a for loop
 */
 template <class T>
 std::vector<T> FFT_Iterative(const std::vector<T>& A,
                              const T e,
                              const T _1 = T(1))
 {
+    const int n = A.size();
+    std::vector<T> B(n), B_old(n);
+    auto P = prime_factorization(n);
+
+    /* reorder input  */
+    for (int i = 0; i < n; ++i)
+    {
+        int j = 0, k = i;
+        for (auto p : P)
+        {
+            j = j * p + k % p;
+            k /= p;
+        }
+        B[j] = A[i];
+    }
+
+    std::reverse(P.begin(), P.end());
+
+    /* fft */
+    int len = 1;
+    for (auto p : P)
+    {
+        int len_old = len;
+        len *= p;
+        std::swap(B, B_old);
+        T e2 = power(e, n / len);
+
+        for (int i = 0; i < n; i += len)
+        {
+            T ej = _1;
+            for (int j = 0; j < len; ++j, ej *= e2)
+            {
+                B[i + j] = T(0);
+                T ejk = _1;
+                for (int k = 0; k < p; ++k, ejk *= ej)
+                {
+                    B[i + j] += B_old[i + k * len_old + j % len_old] * ejk;
+                }
+            }
+        }
+    }
+
+    return B;
+}
+
+/*
+    Divide and Conquer algorithm to compute the Discrete Fourier Transform:
+    aka Fast Fourier Transform.
+    !!! n must be a power of 2 and e must be and n-root of unity (_1)
+
+    In Place wrapper
+*/
+template <class T>
+std::vector<T> FFT_InPlace(const std::vector<T>& A,
+                           const T e,
+                           const T _1 = T(1))
+{
     std::vector<T> B(A);
-    FFT(B.begin(), B.end(), e, _1);
+    FFT_InPlace(B.begin(), B.end(), e, _1);
     return B;
 }

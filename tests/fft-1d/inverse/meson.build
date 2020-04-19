@@ -10,8 +10,12 @@ in_place=executable('in-place',
     ['in-place.cpp'],
     include_directories: [incl])
 
+iterative=executable('iterative',
+    ['iterative.cpp'],
+    include_directories: [incl])
+    
 test_src += [files (
-    ['brute-force.cpp','divide-n-conquer.cpp','in-place.cpp'])]
+    ['brute-force.cpp','divide-n-conquer.cpp','in-place.cpp','iterative.cpp'])]
 
 generator = find_program('gen_test.py')
 
@@ -37,5 +41,12 @@ foreach _t : test_files.to_list()
     test('FFT-1D Inverse in-place',
         judge,
         args: [in_place.full_path(),_t.full_path()],
+        depends: test_files)
+endforeach
+
+foreach _t : test_files.to_list()
+    test('FFT-1D Inverse iterative',
+        judge,
+        args: [iterative.full_path(),_t.full_path()],
         depends: test_files)
 endforeach

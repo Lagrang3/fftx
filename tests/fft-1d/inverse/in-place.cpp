@@ -33,8 +33,8 @@ int main()
         cin >> x;
         A[i] = cd(x, 0);
     }
-    auto FA = FFT_Iterative(A, cd(cos(2 * PI / N), sin(2 * PI / N)));
-    auto A2 = FFT_Iterative(FA, cd(cos(2 * PI / N), -sin(2 * PI / N)));
+    auto FA = FFT_InPlace(A, cd(cos(2 * PI / N), sin(2 * PI / N)));
+    auto A2 = FFT_InPlace(FA, cd(cos(2 * PI / N), -sin(2 * PI / N)));
     double inv_n = 1.0 / N;
     for (auto& x : A2)
         x *= inv_n;

@@ -22,11 +22,10 @@ int main()
     int n, N = 1;
     cin >> n;
 
-    while (N < n)
-        N <<= 1;
-    N <<= 1;
+    N = n;
+    // while (N < n) N <<= 1;
 
-    vector<cd> A(N, 0), B(N, 0), C(N);
+    vector<cd> A(N, 0);
 
     for (int i = 0; i < n; ++i)
     {
@@ -34,33 +33,10 @@ int main()
         cin >> x;
         A[i] = cd(x, 0);
     }
-    for (int i = 0; i < n; ++i)
-    {
-        double x;
-        cin >> x;
-        B[i] = cd(x, 0);
-    }
-
-    // brute force convolution
-    for (int i = 0; i < N; ++i)
-    {
-        C[i] = 0;
-        for (int j = 0; j <= i; ++j)
-            C[i] += A[j] * B[i - j];
-    }
-    // done
-
-    // FFT-based convolution
-    auto FA = FFT_InPlace(A, cd(cos(2 * PI / N), sin(2 * PI / N)));
-    auto FB = FFT_InPlace(B, cd(cos(2 * PI / N), sin(2 * PI / N)));
-
-    vector<cd> FC(N, 0);
-    for (int i = 0; i < N; ++i)
-        FC[i] = FA[i] * FB[i];
-
-    auto C2 = FFT_InPlace(FC, cd(cos(2 * PI / N), -sin(2 * PI / N)));
+    auto FA = FFT_Iterative(A, cd(cos(2 * PI / N), sin(2 * PI / N)));
+    auto A2 = FFT_Iterative(FA, cd(cos(2 * PI / N), -sin(2 * PI / N)));
     double inv_n = 1.0 / N;
-    for (auto& x : C2)
+    for (auto& x : A2)
         x *= inv_n;
     // done
 
@@ -68,7 +44,7 @@ int main()
     double diff = 0;
     for (int i = 0; i < N; ++i)
     {
-        diff += norm(C2[i] - C[i]);
+        diff += norm(A2[i] - A[i]);
     }
     diff = sqrt(diff) / N;
     // done

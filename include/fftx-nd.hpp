@@ -17,7 +17,7 @@ void FFT_dim(iter first, iter last, const int N, const T e, const T _1 = T(1))
         for (size_t i = 0; i < buff.size();)
         {
             int j = i + N;
-            FFT(&buff[i], &buff[j], e, _1);
+            FFT_InPlace(&buff[i], &buff[j], e, _1);
             i = j;
         }
 
