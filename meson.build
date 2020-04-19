@@ -10,6 +10,7 @@ test_src=[]
 
 subdir('include')
 subdir('tests')
+subdir('benchmarks')
 
 _format = find_program('clang-format', required:false)
 pkg=import('pkgconfig')
