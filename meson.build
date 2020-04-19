@@ -2,6 +2,7 @@ project('fftx','cpp',
         default_options : ['cpp_std=c++17',
         'warning_level=3','optimization=3'],
         version: '0.0.1')
+add_global_arguments(['-Ofast','-march=native' ],language : 'cpp')
 
 fftw3_dep = dependency('fftw3')
 
