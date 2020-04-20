@@ -14,6 +14,9 @@ using namespace std::chrono;
 typedef complex<double> cd;
 const double PI = acos(-1.0);
 default_random_engine rng;
+const int Nmax = 1 << 20;
+uniform_real_distribution<double> U(0, 1);
+vector<cd> _data(Nmax);
 
 double test_fftw(const vector<cd>& data, size_t N, int R)
 {
@@ -77,49 +80,103 @@ double test_mylib(const vector<cd>& data, size_t N, int R, Ftype F)
     return T / R / 1000;
 }
 
-int main()
+void benchmark_radix2()
 {
-    const int Nmax = 1 << 20;
-    uniform_real_distribution<double> U(0, 1);
-    vector<cd> data(Nmax);
-
-    for (auto& x : data)
-        x = cd(U(rng), U(rng));
-
+    cout << "    << Radix-2 >>"
+         << "\n";
     for (int N = 1 << 8, R; N < 2000; N *= 4)
     {
-        R = 100;
+        R = 2;
         cout << "N = " << N << '\n';
-        cout << setw(30) << left << "FFTW: " << test_fftw(data, N, R)
+        cout << setw(30) << left << "FFTW: " << test_fftw(_data, N, R)
              << " ms\n";
         cout << setw(30) << left << "MyFFT BruteForce: "
-             << test_mylib(data, N, R, FFT_BruteForce<cd>) << " ms\n";
+             << test_mylib(_data, N, R, FFT_BruteForce<cd>) << " ms\n";
         cout << setw(30) << left << "MyFFT DivideAndConquer: "
-             << test_mylib(data, N, R, FFT_DivideAndConquer<cd>) << " ms\n";
+             << test_mylib(_data, N, R, FFT_DivideAndConquer<cd>) << " ms\n";
         cout << setw(30) << left
-             << "MyFFT InPlace: " << test_mylib(data, N, R, FFT_InPlace<cd>)
+             << "MyFFT InPlace: " << test_mylib(_data, N, R, FFT_InPlace<cd>)
              << " ms\n";
-        cout << setw(30) << left
-             << "MyFFT Iterative: " << test_mylib(data, N, R, FFT_Iterative<cd>)
-             << " ms\n";
+        cout << setw(30) << left << "MyFFT Iterative: "
+             << test_mylib(_data, N, R, FFT_Iterative<cd>) << " ms\n";
         cout << "\n\n";
     }
     for (int N = 1 << 14, R; N <= Nmax; N *= 4)
     {
-        R = 10;
+        R = 2;
         cout << "N = " << N << '\n';
-        cout << setw(30) << left << "FFTW: " << test_fftw(data, N, R)
+        cout << setw(30) << left << "FFTW: " << test_fftw(_data, N, R)
              << " ms\n";
         cout << setw(30) << left << "MyFFT DivideAndConquer: "
-             << test_mylib(data, N, R, FFT_DivideAndConquer<cd>) << " ms\n";
+             << test_mylib(_data, N, R, FFT_DivideAndConquer<cd>) << " ms\n";
         cout << setw(30) << left
-             << "MyFFT InPlace: " << test_mylib(data, N, R, FFT_InPlace<cd>)
+             << "MyFFT InPlace: " << test_mylib(_data, N, R, FFT_InPlace<cd>)
              << " ms\n";
-        cout << setw(30) << left
-             << "MyFFT Iterative: " << test_mylib(data, N, R, FFT_Iterative<cd>)
-             << " ms\n";
+        cout << setw(30) << left << "MyFFT Iterative: "
+             << test_mylib(_data, N, R, FFT_Iterative<cd>) << " ms\n";
         cout << "\n\n";
     }
+}
+void benchmark_any_radix()
+{
+    cout << "    << any Radix >>"
+         << "\n";
+    for (int N = 100, R; N < 2000; N *= 10)
+    {
+        R = 2;
+        cout << "N = " << N << '\n';
+        cout << setw(30) << left << "FFTW: " << test_fftw(_data, N, R)
+             << " ms\n";
+        cout << setw(30) << left << "MyFFT BruteForce: "
+             << test_mylib(_data, N, R, FFT_BruteForce<cd>) << " ms\n";
+        cout << setw(30) << left << "MyFFT DivideAndConquer: "
+             << test_mylib(_data, N, R, FFT_DivideAndConquer<cd>) << " ms\n";
+        cout << setw(30) << left << "MyFFT Iterative: "
+             << test_mylib(_data, N, R, FFT_Iterative<cd>) << " ms\n";
+        cout << "\n\n";
+    }
+    for (int N = 10000, R; N <= Nmax; N *= 10)
+    {
+        R = 2;
+        cout << "N = " << N << '\n';
+        cout << setw(30) << left << "FFTW: " << test_fftw(_data, N, R)
+             << " ms\n";
+        cout << setw(30) << left << "MyFFT DivideAndConquer: "
+             << test_mylib(_data, N, R, FFT_DivideAndConquer<cd>) << " ms\n";
+        cout << setw(30) << left << "MyFFT Iterative: "
+             << test_mylib(_data, N, R, FFT_Iterative<cd>) << " ms\n";
+        cout << "\n\n";
+    }
+}
+void benchmark_primes()
+{
+    vector<int> primes{109, 211, 401, 809, 1009, 10009};
+    cout << "    << Primes >>"
+         << "\n";
+    for (auto N : primes)
+    {
+        int R = 2;
+        cout << "N = " << N << '\n';
+        cout << setw(30) << left << "FFTW: " << test_fftw(_data, N, R)
+             << " ms\n";
+        cout << setw(30) << left << "MyFFT BruteForce: "
+             << test_mylib(_data, N, R, FFT_BruteForce<cd>) << " ms\n";
+        cout << setw(30) << left << "MyFFT DivideAndConquer: "
+             << test_mylib(_data, N, R, FFT_DivideAndConquer<cd>) << " ms\n";
+        cout << setw(30) << left << "MyFFT Iterative: "
+             << test_mylib(_data, N, R, FFT_Iterative<cd>) << " ms\n";
+        cout << "\n\n";
+    }
+}
+
+int main()
+{
+    for (auto& x : _data)
+        x = cd(U(rng), U(rng));
+
+    benchmark_radix2();
+    benchmark_any_radix();
+    benchmark_primes();
 
     return 0;
 }
