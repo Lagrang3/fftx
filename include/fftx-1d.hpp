@@ -21,13 +21,12 @@ std::vector<T> FFT_BruteForce(const std::vector<T>& A,
     T ei = _1;
     for (int i = 0; i < n; ++i)
     {
-        T eij = _1;
-        B[i] = 0;
-        for (int j = 0; j < n; ++j)
+        T b = 0;
+        for (int j = n - 1; j >= 0; --j)
         {
-            B[i] += A[j] * eij;
-            eij *= ei;
+            b = b * ei + A[j];
         }
+        B[i] = b;
         ei *= e;
     }
 
@@ -73,13 +72,12 @@ std::vector<T> FFT_DivideAndConquer(const std::vector<T>& A,
     T ek = _1;
     for (int k = 0; k < n; ++k)
     {
-        B[k] = T(0);
-        T eki = _1;
-        for (int i = 0; i < p; ++i)
+        T b = 0;
+        for (int i = p - 1; i >= 0; --i)
         {
-            B[k] += A_sub[i][k % m] * eki;
-            eki *= ek;
+            b = b * ek + A_sub[i][k % m];
         }
+        B[k] = b;
         ek *= e;
     }
 
@@ -177,12 +175,12 @@ std::vector<T> FFT_Iterative(const std::vector<T>& A,
             T ej = _1;
             for (int j = 0; j < len; ++j, ej *= e2)
             {
-                B[i + j] = T(0);
-                T ejk = _1;
-                for (int k = 0; k < p; ++k, ejk *= ej)
+                T b = 0;
+                for (int k = p - 1; k >= 0; --k)
                 {
-                    B[i + j] += B_old[i + k * len_old + j % len_old] * ejk;
+                    b = b * ej + B_old[i + k * len_old + j % len_old];
                 }
+                B[i + j] = b;
             }
         }
     }
