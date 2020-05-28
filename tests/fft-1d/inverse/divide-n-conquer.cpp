@@ -13,6 +13,7 @@
 #include <fftx.hpp>
 #include <iostream>
 using namespace std;
+using namespace fftx;
 
 typedef complex<double> cd;
 const double PI = acos(-1.0);

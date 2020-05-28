@@ -7,9 +7,10 @@
 #include <random>
 
 #include <fftw3.h>
+#include <omp.h>
+
 
 using namespace std;
-using namespace fftx;
 using namespace std::chrono;
 
 typedef complex<double> cd;
@@ -21,6 +22,7 @@ vector<cd> _data(Nmax);
 
 double test_fftw(const vector<cd>& data, size_t N, int R)
 {
+    fftw_plan_with_nthreads(12);
     double T = 0;
 
     fftw_complex *in, *out;
@@ -45,7 +47,8 @@ double test_fftw(const vector<cd>& data, size_t N, int R)
     fftw_free(in);
     fftw_free(out);
     fftw_destroy_plan(p);
-
+    
+    fftw_cleanup_threads();
     return T / R / 1000;
 }
 
@@ -85,36 +88,16 @@ void benchmark_radix2()
 {
     cout << "    << Radix-2 >>"
          << "\n";
-    for (int N = 1 << 8, R; N < 2000; N *= 4)
-    {
-        R = 2;
-        cout << "N = " << N << '\n';
-        cout << setw(30) << left << "FFTW: " << test_fftw(_data, N, R)
-             << " ms\n";
-        cout << setw(30) << left << "MyFFT BruteForce: "
-             << test_mylib(_data, N, R, FFT_BruteForce<cd>) << " ms\n";
-        cout << setw(30) << left << "MyFFT DivideAndConquer: "
-             << test_mylib(_data, N, R, FFT_DivideAndConquer<cd>) << " ms\n";
-        cout << setw(30) << left
-             << "MyFFT InPlace: " << test_mylib(_data, N, R, FFT_InPlace<cd>)
-             << " ms\n";
-        cout << setw(30) << left << "MyFFT Iterative: "
-             << test_mylib(_data, N, R, FFT_Iterative<cd>) << " ms\n";
-        cout << "\n\n";
-    }
     for (int N = 1 << 14, R; N <= Nmax; N *= 4)
     {
         R = 2;
         cout << "N = " << N << '\n';
         cout << setw(30) << left << "FFTW: " << test_fftw(_data, N, R)
              << " ms\n";
-        cout << setw(30) << left << "MyFFT DivideAndConquer: "
-             << test_mylib(_data, N, R, FFT_DivideAndConquer<cd>) << " ms\n";
-        cout << setw(30) << left
-             << "MyFFT InPlace: " << test_mylib(_data, N, R, FFT_InPlace<cd>)
-             << " ms\n";
+        cout << setw(30) << left << "MyFFT Iterative (serial): "
+             << test_mylib(_data, N, R, fftx::FFT_Iterative<cd>) << " ms\n";
         cout << setw(30) << left << "MyFFT Iterative: "
-             << test_mylib(_data, N, R, FFT_Iterative<cd>) << " ms\n";
+             << test_mylib(_data, N, R, fftx::FFT_Iterative_parallel<cd>) << " ms\n";
         cout << "\n\n";
     }
 }
@@ -122,30 +105,16 @@ void benchmark_any_radix()
 {
     cout << "    << any Radix >>"
          << "\n";
-    for (int N = 100, R; N < 2000; N *= 10)
-    {
-        R = 2;
-        cout << "N = " << N << '\n';
-        cout << setw(30) << left << "FFTW: " << test_fftw(_data, N, R)
-             << " ms\n";
-        cout << setw(30) << left << "MyFFT BruteForce: "
-             << test_mylib(_data, N, R, FFT_BruteForce<cd>) << " ms\n";
-        cout << setw(30) << left << "MyFFT DivideAndConquer: "
-             << test_mylib(_data, N, R, FFT_DivideAndConquer<cd>) << " ms\n";
-        cout << setw(30) << left << "MyFFT Iterative: "
-             << test_mylib(_data, N, R, FFT_Iterative<cd>) << " ms\n";
-        cout << "\n\n";
-    }
     for (int N = 10000, R; N <= Nmax; N *= 10)
     {
         R = 2;
         cout << "N = " << N << '\n';
         cout << setw(30) << left << "FFTW: " << test_fftw(_data, N, R)
              << " ms\n";
-        cout << setw(30) << left << "MyFFT DivideAndConquer: "
-             << test_mylib(_data, N, R, FFT_DivideAndConquer<cd>) << " ms\n";
+        cout << setw(30) << left << "MyFFT Iterative (serial): "
+             << test_mylib(_data, N, R, fftx::FFT_Iterative<cd>) << " ms\n";
         cout << setw(30) << left << "MyFFT Iterative: "
-             << test_mylib(_data, N, R, FFT_Iterative<cd>) << " ms\n";
+             << test_mylib(_data, N, R, fftx::FFT_Iterative_parallel<cd>) << " ms\n";
         cout << "\n\n";
     }
 }
@@ -160,18 +129,17 @@ void benchmark_primes()
         cout << "N = " << N << '\n';
         cout << setw(30) << left << "FFTW: " << test_fftw(_data, N, R)
              << " ms\n";
-        cout << setw(30) << left << "MyFFT BruteForce: "
-             << test_mylib(_data, N, R, FFT_BruteForce<cd>) << " ms\n";
-        cout << setw(30) << left << "MyFFT DivideAndConquer: "
-             << test_mylib(_data, N, R, FFT_DivideAndConquer<cd>) << " ms\n";
+        cout << setw(30) << left << "MyFFT Iterative (serial): "
+             << test_mylib(_data, N, R, fftx::FFT_Iterative<cd>) << " ms\n";
         cout << setw(30) << left << "MyFFT Iterative: "
-             << test_mylib(_data, N, R, FFT_Iterative<cd>) << " ms\n";
+             << test_mylib(_data, N, R, fftx::FFT_Iterative_parallel<cd>) << " ms\n";
         cout << "\n\n";
     }
 }
 
 int main()
 {
+    fftw_init_threads();
     for (auto& x : _data)
         x = cd(U(rng), U(rng));
 

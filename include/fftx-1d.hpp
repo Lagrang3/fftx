@@ -7,6 +7,11 @@
 #include <vector>
 
 #include <fftx-math.hpp>
+#include <tbb/parallel_for.h>
+#include <tbb/parallel_reduce.h>
+
+namespace fftx
+{
 
 /*
     Brute force implementation of the Discrete Fourier transform.
@@ -32,12 +37,10 @@ std::vector<T> FFT_BruteForce(const std::vector<T>& A,
 
     return B;
 }
-
 /*
     Divide and Conquer algorithm to compute the Discrete Fourier Transform:
     aka Fast Fourier Transform.
     This implementation uses recursion.
-    !!! n must be a power of 2 and e must be and n-root of unity (_1)
 */
 template <class T>
 std::vector<T> FFT_DivideAndConquer(const std::vector<T>& A,
@@ -83,6 +86,7 @@ std::vector<T> FFT_DivideAndConquer(const std::vector<T>& A,
 
     return B;
 }
+
 
 /*
     In-place FFT
@@ -187,6 +191,92 @@ std::vector<T> FFT_Iterative(const std::vector<T>& A,
 
     return B;
 }
+/*
+    Divide and Conquer algorithm to compute the Discrete Fourier Transform:
+    aka Fast Fourier Transform.
+    In a for loop
+    
+    TBB threaded version
+*/
+template <class T>
+std::vector<T> FFT_Iterative_parallel(const std::vector<T>& A,
+                             const T e,
+                             const T _1 = T(1))
+{
+    const int n = A.size();
+    std::vector<T> B(n), B_old(n);
+    auto P = prime_factorization(n);
+
+    /* reorder input  */
+    tbb::parallel_for(0,n,100,
+        [&A,&B,&P](int i)
+        {
+            int j = 0, k = i;
+            for (auto p : P)
+            {
+                j = j * p + k % p;
+                k /= p;
+            }
+            B[j] = A[i];
+        
+        });
+
+    std::reverse(P.begin(), P.end());
+
+    /* fft */
+    int len = 1;
+    for (auto p : P)
+    {
+        int len_old = len;
+        len *= p;
+        std::swap(B, B_old);
+        T e2 = power(e, n / len);
+
+        tbb::parallel_for(0,n/len,1,
+            [&](int idx)
+            {
+                int i=idx * len;
+                T ej = _1;
+                for (int j = 0; j < len; ++j, ej *= e2)
+                {
+                            
+                     if(p<2000)
+                     {
+                            T b = 0;
+                            for (int k = p - 1; k >= 0; --k)
+                            {
+                                b = b * ej + B_old[i + k * len_old + j % len_old];
+                            }
+                            B[i+j]=b;
+                    }else{
+                    using  pair = std::pair<T,int>;
+                    
+                    B[i + j] = tbb::parallel_reduce(
+                        tbb::blocked_range<int>(0,p,100),
+                        pair(T(0),0),
+                        [&](const tbb::blocked_range<int>& range,pair init)->pair
+                        {
+                            T b = 0;
+                            for (int k = range.end() - 1; k >= range.begin(); --k)
+                            {
+                                b = b * ej + B_old[i + k * len_old + j % len_old];
+                            }
+                            return pair(b,range.size());
+                        },
+                        [&ej](pair a,pair b)
+                            {
+                                return pair(
+                                    a.first+b.first*power(ej,a.second),
+                                    a.second+b.second);
+                            }
+                    ).first;
+                    }
+                }
+            });
+    }
+
+    return B;
+}
 
 /*
     Divide and Conquer algorithm to compute the Discrete Fourier Transform:
@@ -203,4 +293,6 @@ std::vector<T> FFT_InPlace(const std::vector<T>& A,
     std::vector<T> B(A);
     FFT_InPlace(B.begin(), B.end(), e, _1);
     return B;
+}
+
 }

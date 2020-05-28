@@ -3,6 +3,8 @@
 #include <fftx-1d.hpp>
 #include <memory>
 
+namespace fftx
+{
 template <int dim, class iter, class T>
 void FFT_dim(iter first, iter last, const int N, const T e, const T _1 = T(1))
 {
@@ -33,4 +35,5 @@ void FFT_dim(iter first, iter last, const int N, const T e, const T _1 = T(1))
         buff = std::move(tmp);
     }
     std::copy(buff.begin(), buff.end(), first);
+}
 }

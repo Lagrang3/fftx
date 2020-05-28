@@ -8,6 +8,7 @@
 #include <fftw3.h>
 
 using namespace std;
+using namespace fftx;
 using namespace std::chrono;
 
 typedef complex<double> cd;
