@@ -1,10 +1,14 @@
-project('fftx','cpp',
-        default_options : ['cpp_std=c++17',
-        'warning_level=3','optimization=3'],
+project('fftx','cpp','cuda',
         version: '0.0.1')
-add_global_arguments(['-Ofast','-march=native' ],language : 'cpp')
+        
+add_global_arguments([
+    '-O3','-Ofast','-march=native','-std=c++17','-Wall'],
+    language : 'cpp')
+    
+add_global_arguments(['-O3'],language : 'cuda')
 
 fftw3_dep = dependency('fftw3')
+cufft = dependency('cuda', modules: ['cufft'] )
 
 headers=[]
 test_src=[]
