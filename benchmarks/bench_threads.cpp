@@ -9,7 +9,6 @@
 #include <fftw3.h>
 #include <omp.h>
 
-
 using namespace std;
 using namespace std::chrono;
 
@@ -47,7 +46,7 @@ double test_fftw(const vector<cd>& data, size_t N, int R)
     fftw_free(in);
     fftw_free(out);
     fftw_destroy_plan(p);
-    
+
     fftw_cleanup_threads();
     return T / R / 1000;
 }
@@ -97,7 +96,8 @@ void benchmark_radix2()
         cout << setw(30) << left << "MyFFT Iterative (serial): "
              << test_mylib(_data, N, R, fftx::FFT_Iterative<cd>) << " ms\n";
         cout << setw(30) << left << "MyFFT Iterative: "
-             << test_mylib(_data, N, R, fftx::FFT_Iterative_parallel<cd>) << " ms\n";
+             << test_mylib(_data, N, R, fftx::FFT_Iterative_parallel<cd>)
+             << " ms\n";
         cout << "\n\n";
     }
 }
@@ -114,7 +114,8 @@ void benchmark_any_radix()
         cout << setw(30) << left << "MyFFT Iterative (serial): "
              << test_mylib(_data, N, R, fftx::FFT_Iterative<cd>) << " ms\n";
         cout << setw(30) << left << "MyFFT Iterative: "
-             << test_mylib(_data, N, R, fftx::FFT_Iterative_parallel<cd>) << " ms\n";
+             << test_mylib(_data, N, R, fftx::FFT_Iterative_parallel<cd>)
+             << " ms\n";
         cout << "\n\n";
     }
 }
@@ -132,7 +133,8 @@ void benchmark_primes()
         cout << setw(30) << left << "MyFFT Iterative (serial): "
              << test_mylib(_data, N, R, fftx::FFT_Iterative<cd>) << " ms\n";
         cout << setw(30) << left << "MyFFT Iterative: "
-             << test_mylib(_data, N, R, fftx::FFT_Iterative_parallel<cd>) << " ms\n";
+             << test_mylib(_data, N, R, fftx::FFT_Iterative_parallel<cd>)
+             << " ms\n";
         cout << "\n\n";
     }
 }
