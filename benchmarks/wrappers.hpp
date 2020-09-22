@@ -2,6 +2,10 @@
 #include <functional>
 #include <random>
 
+#include <fftw3.h>
+
+#include <benchmark/benchmark.h>
+
 #include <fftx.hpp>
 
 typedef std::complex<double> cd;

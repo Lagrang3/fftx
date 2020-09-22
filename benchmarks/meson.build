@@ -1,25 +1,21 @@
+gbench = dependency('benchmark',required: false)
+pthread = cpp.find_library('pthread', required: false)
+
+fftw3 = dependency('fftw3',required: false)
+fftw3_omp = dependency('fftw3_omp',required: false)
+libomp=cpp.find_library('gomp', required: false)
+
 test_src += [files (
-    ['bench.cpp','bench_threads.cpp',
-        'primes.cpp','powers10.cpp','powers2.cpp','wrappers.hpp'])]
+    ['primes.cpp','powers10.cpp','powers2.cpp','wrappers.hpp'])]
 
-executable('bench',
-    ['bench.cpp'],
-    include_directories: [incl],
-    dependencies: [fftw3_dep])
 
-executable('bench_threads',
-    ['bench_threads.cpp'],
-    include_directories: [incl],
-    dependencies: [fftw3_omp_dep,libomp,pstl,tbb])
-
-gbench = dependency('benchmark')
-pthread = cpp.find_library('pthread')
-
-executable('powers2',['powers2.cpp'],include_directories: [incl],
-    dependencies: [gbench,pthread,fftw3_dep])
-    
-executable('powers10',['powers10.cpp'],include_directories: [incl],
-    dependencies: [gbench,pthread,fftw3_dep])
-    
-executable('primes',['primes.cpp'],include_directories: [incl],
-    dependencies: [gbench,pthread,fftw3_dep])
+if (gbench.found() and pthread.found())
+    executable('powers2',['powers2.cpp'],include_directories: [incl],
+        dependencies: [gbench,pthread,fftw3])
+        
+    executable('powers10',['powers10.cpp'],include_directories: [incl],
+        dependencies: [gbench,pthread,fftw3])
+        
+    executable('primes',['primes.cpp'],include_directories: [incl],
+        dependencies: [gbench,pthread,fftw3])
+endif

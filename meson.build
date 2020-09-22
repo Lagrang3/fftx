@@ -4,8 +4,6 @@ project('fftx','cpp',
         version: '0.0.1')
 add_global_arguments(['-Ofast','-march=native' ],language : 'cpp')
 
-fftw3_dep = dependency('fftw3')
-fftw3_omp_dep = dependency('fftw3_omp')
 cpp=meson.get_compiler('cpp')
 libomp=cpp.find_library('gomp')
 pstl=dependency('pstl')
