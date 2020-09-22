@@ -1,9 +1,9 @@
 #pragma once
 
 #include <algorithm>
-#include <cassert>
 #include <complex>
 #include <fftw3.h>
+#include <string>
 #include <vector>
 
 #include <fftx-math.hpp>
@@ -95,7 +95,10 @@ namespace fftx
     void FFT_InPlace(iter first, iter last, const T e, const T _1 = T(1))
     {
         const int n = std::distance(first, last);
-        assert(__builtin_popcount(n) == 1);
+        if (__builtin_popcount(n) != 1)
+            throw std::runtime_error(std::string(__func__) +
+                                     " n=" + std::to_string(n) +
+                                     " must be a power of 2");
 
         T f = power(e, n / 2, _1);
         int nbits = 0;
