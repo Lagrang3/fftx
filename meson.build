@@ -5,10 +5,6 @@ project('fftx','cpp',
 add_global_arguments(['-Ofast','-march=native' ],language : 'cpp')
 
 cpp=meson.get_compiler('cpp')
-libomp=cpp.find_library('gomp')
-pstl=dependency('pstl')
-tbb=dependency('tbb')
-boost=dependency('boost',modules : ['unit_test_framework'])
 
 headers=[]
 test_src=[]

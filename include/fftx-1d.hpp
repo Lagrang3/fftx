@@ -7,8 +7,6 @@
 #include <vector>
 
 #include <fftx-math.hpp>
-#include <tbb/parallel_for.h>
-#include <tbb/parallel_reduce.h>
 
 namespace fftx
 {
@@ -199,6 +197,7 @@ namespace fftx
 
         TBB threaded version
     */
+    /*
     template <class T>
     std::vector<T> FFT_Iterative_parallel(const std::vector<T>& A,
                                           const T e,
@@ -208,7 +207,7 @@ namespace fftx
         std::vector<T> B(n), B_old(n);
         auto P = prime_factorization(n);
 
-        /* reorder input  */
+        // reorder input
         tbb::parallel_for(0, n, 100, [&A, &B, &P](int i) {
             int j = 0, k = i;
             for (auto p : P)
@@ -221,7 +220,7 @@ namespace fftx
 
         std::reverse(P.begin(), P.end());
 
-        /* fft */
+        // fft
         int len = 1;
         for (auto p : P)
         {
@@ -276,7 +275,7 @@ namespace fftx
 
         return B;
     }
-
+    */
     /*
         Divide and Conquer algorithm to compute the Discrete Fourier Transform:
         aka Fast Fourier Transform.
