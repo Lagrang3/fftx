@@ -2,7 +2,9 @@
 #include <functional>
 #include <random>
 
-#include <fftw3.h>
+#ifdef WITH_FFTW3
+#    include <fftw3.h>
+#endif
 
 #include <benchmark/benchmark.h>
 
@@ -65,6 +67,8 @@ void bench_Iterative(benchmark::State& state)
     }
     state.SetComplexityN(state.range(0));
 }
+
+#ifdef WITH_FFTW3
 void bench_FFTW(benchmark::State& state)
 {
     auto data = random_vec(state.range(0));
@@ -88,3 +92,33 @@ void bench_FFTW(benchmark::State& state)
     fftw_destroy_plan(p);
     state.SetComplexityN(state.range(0));
 }
+#endif
+
+#ifdef WITH_FFTW3_OMP
+void bench_FFTW_omp(benchmark::State& state)
+{
+    fftw_init_threads();
+    fftw_plan_with_nthreads(12);
+    auto data = random_vec(state.range(0));
+    fftw_complex *in, *out;
+    fftw_plan p;
+    in = (fftw_complex*)fftw_malloc(sizeof(fftw_complex) * data.size());
+    out = (fftw_complex*)fftw_malloc(sizeof(fftw_complex) * data.size());
+
+    for (size_t i = 0; i < data.size(); ++i)
+    {
+        in[i][0] = data[i].real();
+        in[i][1] = data[i].imag();
+    }
+    p = fftw_plan_dft_1d(data.size(), in, out, FFTW_FORWARD, FFTW_ESTIMATE);
+    for (auto _ : state)
+    {
+        fftw_execute(p);
+    }
+    fftw_free(in);
+    fftw_free(out);
+    fftw_destroy_plan(p);
+    state.SetComplexityN(state.range(0));
+    fftw_cleanup_threads();
+}
+#endif

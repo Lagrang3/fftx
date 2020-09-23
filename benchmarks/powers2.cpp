@@ -21,9 +21,18 @@ BENCHMARK(bench_Iterative)
     ->Range(1 << 5, 1 << 20)
     ->Complexity(benchmark::oNLogN);
 
+#ifdef WITH_FFTW3
 BENCHMARK(bench_FFTW)
     ->RangeMultiplier(8)
     ->Range(1 << 5, 1 << 20)
     ->Complexity(benchmark::oNLogN);
+#endif
+
+#ifdef WITH_FFTW3_OMP
+BENCHMARK(bench_FFTW_omp)
+    ->RangeMultiplier(8)
+    ->Range(1 << 5, 1 << 20)
+    ->Complexity(benchmark::oNLogN);
+#endif
 
 BENCHMARK_MAIN();

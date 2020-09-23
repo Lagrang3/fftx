@@ -16,9 +16,18 @@ BENCHMARK(bench_Iterative)
     ->Range(10, 1000'000)
     ->Complexity(benchmark::oNLogN);
 
+#ifdef WITH_FFTW3
 BENCHMARK(bench_FFTW)
     ->RangeMultiplier(10)
     ->Range(10, 1000'000)
     ->Complexity(benchmark::oNLogN);
+#endif
+
+#ifdef WITH_FFTW3_OMP
+BENCHMARK(bench_FFTW_omp)
+    ->RangeMultiplier(10)
+    ->Range(10, 1000'000)
+    ->Complexity(benchmark::oNLogN);
+#endif
 
 BENCHMARK_MAIN();
