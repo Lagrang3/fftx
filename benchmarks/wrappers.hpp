@@ -1,5 +1,6 @@
 #include <complex>
 #include <functional>
+#include <iostream>
 #include <random>
 
 #ifdef WITH_FFTW3
@@ -120,5 +121,24 @@ void bench_FFTW_omp(benchmark::State& state)
     fftw_destroy_plan(p);
     state.SetComplexityN(state.range(0));
     fftw_cleanup_threads();
+}
+#endif
+
+#ifdef WITH_ALGLIB
+#    include "fasttransforms.h"
+#    include "stdafx.h"
+void bench_ALGLIB(benchmark::State& state)
+{
+    auto data = random_vec(state.range(0));
+    alglib::complex_1d_array v;
+    v.setlength(data.size());
+
+    for (auto _ : state)
+    {
+        for (int i = 0; i < data.size(); ++i)
+            v[i] = alglib::complex(data[i].real(), data[i].imag());
+        alglib::fftc1d(v);
+    }
+    state.SetComplexityN(state.range(0));
 }
 #endif

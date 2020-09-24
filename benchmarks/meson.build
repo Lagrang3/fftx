@@ -5,6 +5,8 @@ fftw3 = dependency('fftw3',required: false)
 fftw3_omp = dependency('fftw3_omp',required: false)
 omp=cpp.find_library('gomp', required: false)
 
+alglib=dependency('alglib', required: false)
+
 test_src += [files (
     ['primes.cpp','powers10.cpp','powers2.cpp','wrappers.hpp'])]
 
@@ -24,6 +26,10 @@ if (gbench.found() and pthread.found())
         args += ['-DWITH_FFTW3_OMP']
     endif
     
+    if (alglib.found())
+        dep += [alglib]
+        args += ['-DWITH_ALGLIB']
+    endif
     
     executable('powers2',['powers2.cpp'],include_directories: include,
         dependencies: dep,

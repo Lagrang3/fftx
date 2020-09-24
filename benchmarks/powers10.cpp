@@ -30,4 +30,11 @@ BENCHMARK(bench_FFTW_omp)
     ->Complexity(benchmark::oNLogN);
 #endif
 
+#ifdef WITH_ALGLIB
+BENCHMARK(bench_ALGLIB)
+    ->RangeMultiplier(10)
+    ->Range(10, 1000'000)
+    ->Complexity(benchmark::oNLogN);
+#endif
+
 BENCHMARK_MAIN();

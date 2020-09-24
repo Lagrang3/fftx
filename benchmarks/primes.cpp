@@ -50,4 +50,15 @@ BENCHMARK(bench_FFTW_omp)
     ->Complexity(benchmark::oNLogN);
 #endif
 
+#ifdef WITH_ALGLIB
+BENCHMARK(bench_ALGLIB)
+    ->Arg(109)
+    ->Arg(211)
+    ->Arg(401)
+    ->Arg(809)
+    ->Arg(1009)
+    ->Arg(10009)
+    ->Complexity(benchmark::oNLogN);
+#endif
+
 BENCHMARK_MAIN();
