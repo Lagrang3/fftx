@@ -42,6 +42,16 @@ struct pow2_fft
     constexpr auto size() const { return n; }
 };
 
+template <std::size_t n, class T>
+struct handwritten_fft
+{
+    void operator()(std::vector<T>& A, const T e, const T _1) const
+    {
+        FFT_Handwritten_fixed<n>(A.begin(), e, _1);
+    }
+    constexpr auto size() const { return n; }
+};
+
 template <class fft_type>
 void test_func_inverse(const std::vector<cd>& data)
 {
@@ -104,6 +114,23 @@ template <std::size_t beg, std::size_t end>
     test_powrange<beg * 2, end>(A, TS);
 }
 
+template <std::size_t beg, std::size_t end>
+typename std::enable_if<beg >= end, void>::type test_linrange_handwritten(
+    const std::vector<cd>& A,
+    inverse_test_suite& TS)
+{
+}
+template <std::size_t beg, std::size_t end>
+    typename std::enable_if <
+    beg<end, void>::type test_linrange_handwritten(const std::vector<cd>& A,
+                                       inverse_test_suite& TS)
+{
+    TS.add(BOOST_TEST_CASE_NAME(
+        std::bind(&test_func_inverse<handwritten_fft<beg, cd>>, A),
+        "Handwritten fixed-size FFT, N=" + std::to_string(beg)));
+    test_linrange_handwritten<beg + 1, end>(A, TS);
+}
+
 struct inverse_test_suite : public test_suite
 {
     std::default_random_engine gen;
@@ -127,6 +154,8 @@ struct inverse_test_suite : public test_suite
 
         test_linrange<1, 10>(A, *this);
         test_powrange<1, 128>(A, *this);
+        
+        test_linrange_handwritten<1, 5>(A, *this);
     }
 };
 

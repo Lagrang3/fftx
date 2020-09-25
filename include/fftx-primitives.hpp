@@ -31,6 +31,40 @@ namespace fftx
         fixed-size FFT with n a power of two
     */
     template <std::size_t n, class iter, class T>
+    void FFT_Handwritten_fixed(iter first, const T e, const T _1 = T(1))
+    {
+        std::array<T, n> x;
+        std::copy(first, first + n, x.begin());
+        T ep = _1;
+        switch (n)
+        {
+            case 1:
+                return;
+            case 2:
+                first[0] = x[0] + x[1];
+                first[1] = x[0] + x[1] * e;
+                return;
+            case 3:
+                first[0] = x[0] + x[1] + x[2];
+                first[1] = x[0] + e * (x[1] + e * x[2]);
+                ep = e * e;
+                first[2] = x[0] + ep * (x[1] + ep * x[2]);
+                return;
+            case 4:
+                first[0] = x[0] + x[1] + x[2] + x[3];
+                first[1] = x[0] + e * (x[1] + e * (x[2] + e * x[3]));
+                ep = e * e;
+                first[2] = x[0] + ep * (x[1] + ep * (x[2] + ep * x[3]));
+                ep = e * e * e;
+                first[3] = x[0] + ep * (x[1] + ep * (x[2] + ep * x[3]));
+                return;
+        }
+    }
+
+    /*
+        fixed-size FFT with n a power of two
+    */
+    template <std::size_t n, class iter, class T>
     void FFT_Power2_fixed(iter first, const T e, const T _1 = T(1))
     {
         T f = power(e, n / 2, _1);

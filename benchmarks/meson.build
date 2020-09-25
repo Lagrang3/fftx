@@ -8,7 +8,8 @@ omp=cpp.find_library('gomp', required: false)
 alglib=dependency('alglib', required: false)
 
 test_src += [files (
-    ['primes.cpp','powers10.cpp','powers2.cpp','wrappers.hpp'])]
+    ['primes.cpp','powers10.cpp','powers2.cpp','wrappers.hpp',
+    'primitives.cpp'])]
 
 
 if (gbench.found() and pthread.found())
@@ -40,6 +41,10 @@ if (gbench.found() and pthread.found())
         cpp_args: args)
         
     executable('primes',['primes.cpp'],include_directories: include,
+        dependencies: dep,
+        cpp_args: args)
+    
+    executable('primitives',['primitives.cpp'],include_directories: include,
         dependencies: dep,
         cpp_args: args)
 endif
