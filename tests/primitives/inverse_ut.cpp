@@ -123,7 +123,7 @@ typename std::enable_if<beg >= end, void>::type test_linrange_handwritten(
 template <std::size_t beg, std::size_t end>
     typename std::enable_if <
     beg<end, void>::type test_linrange_handwritten(const std::vector<cd>& A,
-                                       inverse_test_suite& TS)
+                                                   inverse_test_suite& TS)
 {
     TS.add(BOOST_TEST_CASE_NAME(
         std::bind(&test_func_inverse<handwritten_fft<beg, cd>>, A),
@@ -154,7 +154,7 @@ struct inverse_test_suite : public test_suite
 
         test_linrange<1, 10>(A, *this);
         test_powrange<1, 128>(A, *this);
-        
+
         test_linrange_handwritten<1, 5>(A, *this);
     }
 };
