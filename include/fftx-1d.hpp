@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 
+#include <fftx-fixed.hpp>
 #include <fftx-math.hpp>
 
 namespace fftx
@@ -34,56 +35,6 @@ namespace fftx
 
         return B;
     }
-    /*
-        Divide and Conquer algorithm to compute the Discrete Fourier Transform:
-        aka Fast Fourier Transform.
-        This implementation uses recursion.
-    */
-    template <class T>
-    std::vector<T> FFT_DivideAndConquer(const std::vector<T>& A,
-                                        const T e,
-                                        const T _1 = T(1))
-    {
-        const int n = A.size();
-
-        if (n == 1)
-            return A;
-
-        const int p = prime_factor(n);
-
-        if (p == n)
-            return FFT_BruteForce(A, e, _1);
-
-        const int m = n / p;
-        const auto ep = power(e, p);
-
-        std::vector<T> B(n);
-        std::vector<std::vector<T>> A_sub(p);
-
-        for (int i = 0; i < p; ++i)
-        {
-            std::vector<T> tmp(m);
-            for (int j = 0; j < m; ++j)
-                tmp[j] = A[j * p + i];
-
-            A_sub[i] = FFT_DivideAndConquer(tmp, ep, _1);
-        }
-
-        T ek = _1;
-        for (int k = 0; k < n; ++k)
-        {
-            T b = 0;
-            for (int i = p - 1; i >= 0; --i)
-            {
-                b = b * ek + A_sub[i][k % m];
-            }
-            B[k] = b;
-            ek *= e;
-        }
-
-        return B;
-    }
-
     /*
         In-place FFT
         !!! n must be a power of 2 and e must be and n-root of unity (_1)
@@ -190,6 +141,85 @@ namespace fftx
 
         return B;
     }
+    /*
+        Divide and Conquer algorithm to compute the Discrete Fourier Transform:
+        aka Fast Fourier Transform.
+        This implementation uses recursion.
+    */
+    template <class T>
+    std::vector<T> FFT_DivideAndConquer(const std::vector<T>& A,
+                                        const T e,
+                                        const T _1 = T(1))
+    {
+        const int n = A.size();
+
+        if (n == 1)
+            return A;
+
+        const int p = prime_factor(n);
+
+        if (p == n)
+            return FFT_BruteForce(A, e, _1);
+
+        const int m = n / p;
+        const auto ep = power(e, p);
+
+        std::vector<T> B(n);
+        std::vector<std::vector<T>> A_sub(p, std::vector<T>(m));
+
+        for (int i = 0; i < p; ++i)
+        {
+            for (int j = 0; j < m; ++j)
+                A_sub[i][j] = A[j * p + i];
+
+            switch (m)
+            {
+                case 1:;
+                    break;
+                case 2:
+                    FFT_InPlace_fixed<2>(A_sub[i].begin(), ep, _1);
+                    break;
+                case 3:
+                    FFT_Iterative_fixed<3>(A_sub[i].begin(), ep, _1);
+                    break;
+                case 4:
+                    FFT_InPlace_fixed<4>(A_sub[i].begin(), ep, _1);
+                    break;
+                case 5:
+                    FFT_Iterative_fixed<5>(A_sub[i].begin(), ep, _1);
+                    break;
+                case 6:
+                    FFT_Iterative_fixed<6>(A_sub[i].begin(), ep, _1);
+                    break;
+                case 7:
+                    FFT_Iterative_fixed<7>(A_sub[i].begin(), ep, _1);
+                    break;
+                case 8:
+                    FFT_InPlace_fixed<8>(A_sub[i].begin(), ep, _1);
+                    break;
+
+                default:
+                    A_sub[i] = FFT_Iterative(A_sub[i], ep, _1);
+            }
+            // A_sub[i]=FFT_Iterative(A_sub[i], ep, _1);
+            // A_sub[i]=FFT_DivideAndConquer(A_sub[i],ep,_1);
+        }
+
+        T ek = _1;
+        for (int k = 0; k < n; ++k)
+        {
+            T b = 0;
+            for (int i = p - 1; i >= 0; --i)
+            {
+                b = b * ek + A_sub[i][k % m];
+            }
+            B[k] = b;
+            ek *= e;
+        }
+
+        return B;
+    }
+
     /*
         Divide and Conquer algorithm to compute the Discrete Fourier Transform:
         aka Fast Fourier Transform.

@@ -78,7 +78,7 @@ void bench_FFTW(benchmark::State& state)
     in = (fftw_complex*)fftw_malloc(sizeof(fftw_complex) * data.size());
     out = (fftw_complex*)fftw_malloc(sizeof(fftw_complex) * data.size());
 
-    for (size_t i = 0; i < data.size(); ++i)
+    for (std::size_t i = 0; i < data.size(); ++i)
     {
         in[i][0] = data[i].real();
         in[i][1] = data[i].imag();
@@ -106,7 +106,7 @@ void bench_FFTW_omp(benchmark::State& state)
     in = (fftw_complex*)fftw_malloc(sizeof(fftw_complex) * data.size());
     out = (fftw_complex*)fftw_malloc(sizeof(fftw_complex) * data.size());
 
-    for (size_t i = 0; i < data.size(); ++i)
+    for (std::size_t i = 0; i < data.size(); ++i)
     {
         in[i][0] = data[i].real();
         in[i][1] = data[i].imag();
@@ -135,7 +135,7 @@ void bench_ALGLIB(benchmark::State& state)
 
     for (auto _ : state)
     {
-        for (int i = 0; i < data.size(); ++i)
+        for (std::size_t i = 0; i < data.size(); ++i)
             v[i] = alglib::complex(data[i].real(), data[i].imag());
         alglib::fftc1d(v);
     }
