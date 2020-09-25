@@ -5,5 +5,5 @@ headers += [files([
     'fftx-1d.hpp',
     'fftx-nd.hpp',
     'fftx-math.hpp',
-    'fftx-fixed.hpp'])]
+    'fftx-primitives.hpp'])]
 

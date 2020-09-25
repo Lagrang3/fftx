@@ -6,8 +6,8 @@
 #include <string>
 #include <vector>
 
-#include <fftx-fixed.hpp>
 #include <fftx-math.hpp>
+#include <fftx-primitives.hpp>
 
 namespace fftx
 {
@@ -172,37 +172,7 @@ namespace fftx
             for (int j = 0; j < m; ++j)
                 A_sub[i][j] = A[j * p + i];
 
-            switch (m)
-            {
-                case 1:;
-                    break;
-                case 2:
-                    FFT_InPlace_fixed<2>(A_sub[i].begin(), ep, _1);
-                    break;
-                case 3:
-                    FFT_Iterative_fixed<3>(A_sub[i].begin(), ep, _1);
-                    break;
-                case 4:
-                    FFT_InPlace_fixed<4>(A_sub[i].begin(), ep, _1);
-                    break;
-                case 5:
-                    FFT_Iterative_fixed<5>(A_sub[i].begin(), ep, _1);
-                    break;
-                case 6:
-                    FFT_Iterative_fixed<6>(A_sub[i].begin(), ep, _1);
-                    break;
-                case 7:
-                    FFT_Iterative_fixed<7>(A_sub[i].begin(), ep, _1);
-                    break;
-                case 8:
-                    FFT_InPlace_fixed<8>(A_sub[i].begin(), ep, _1);
-                    break;
-
-                default:
-                    A_sub[i] = FFT_Iterative(A_sub[i], ep, _1);
-            }
-            // A_sub[i]=FFT_Iterative(A_sub[i], ep, _1);
-            // A_sub[i]=FFT_DivideAndConquer(A_sub[i],ep,_1);
+            A_sub[i] = FFT_DivideAndConquer(A_sub[i], ep, _1);
         }
 
         T ek = _1;

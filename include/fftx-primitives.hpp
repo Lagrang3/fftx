@@ -1,14 +1,37 @@
 #pragma once
+
+#include <algorithm>
+#include <vector>
+
 #include <fftx-math.hpp>
 
 /*
-    Fixed size Fourier transforms
+    Primitive Fourier transforms.
+
+    Rules:
+    - the have the signature:
+
+    template <class iter, class T>
+    void FFT_*(iter first, iter last, const T e, const T _1 = T(1));
+
+    or
+
+    template <std::size_t n, class iter, class T>
+    void FFT_*(iter first, const T e, const T _1 = T(1));
+    // here the last is not necessary because n gives the size of the container
+
+    - they solve the FT in-place
+
+    - iter must be a random access iterator
 */
 
 namespace fftx
 {
+    /*
+        fixed-size FFT with n a power of two
+    */
     template <std::size_t n, class iter, class T>
-    void FFT_InPlace_fixed(iter first, const T e, const T _1 = T(1))
+    void FFT_Power2_fixed(iter first, const T e, const T _1 = T(1))
     {
         T f = power(e, n / 2, _1);
         int nbits = 0;
@@ -49,10 +72,13 @@ namespace fftx
         }
     }
 
+    /*
+        fixed-size FFT with n any number
+    */
     template <std::size_t n, class iter, class T>
     void FFT_Iterative_fixed(iter first, const T e, const T _1 = T(1))
     {
-        std::array<T, n> B, B_old;
+        std::vector<T> B(n), B_old(n);
         auto P = prime_factorization(n);
 
         /* reorder input  */
