@@ -7,12 +7,12 @@ if (boost_ut.found())
         include_directories: [incl],
         dependencies: [boost_ut])
 
-    test('FFT Convolution',convolution_ut)
+    test('FFT-primitives Convolution',convolution_ut)
 
     inverse_ut = executable('inverse_ut',
         ['inverse_ut.cpp'],
         include_directories: [incl],
         dependencies: [boost_ut])
 
-    test('FFT Inverse',inverse_ut)
+    test('FFT-primitives Inverse',inverse_ut)
 endif

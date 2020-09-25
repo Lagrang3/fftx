@@ -141,9 +141,6 @@ struct convolution_test_suite : public test_suite
     }
 };
 
-// test throw
-// test timeouts
-
 test_suite* init_unit_test_suite(int argc, char* argv[])
 {
     framework::master_test_suite().p_name.value = "Boost Test FFTX";
