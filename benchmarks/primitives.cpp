@@ -9,6 +9,7 @@
 
 #include <benchmark/benchmark.h>
 
+#include <fftx-1d.hpp>
 #include <fftx-primitives.hpp>
 
 typedef std::complex<double> cd;
@@ -43,6 +44,17 @@ void bench_handwritten(benchmark::State& state)
     for (auto _ : state)
     {
         fftx::FFT_Handwritten_fixed<n>(
+            data.begin(),
+            cd(cos(2 * PI / data.size()), -sin(2 * PI / data.size())));
+    }
+}
+template <std::size_t n>
+void bench_BruteForce(benchmark::State& state)
+{
+    auto data = random_vec(n);
+    for (auto _ : state)
+    {
+        fftx::FFT_BruteForce_fixed<n>(
             data.begin(),
             cd(cos(2 * PI / data.size()), -sin(2 * PI / data.size())));
     }
@@ -84,6 +96,14 @@ BENCHMARK_TEMPLATE(bench_handwritten, 2);
 BENCHMARK_TEMPLATE(bench_handwritten, 3);
 BENCHMARK_TEMPLATE(bench_handwritten, 4);
 BENCHMARK_TEMPLATE(bench_handwritten, 5);
+
+BENCHMARK_TEMPLATE(bench_BruteForce, 2);
+BENCHMARK_TEMPLATE(bench_BruteForce, 3);
+BENCHMARK_TEMPLATE(bench_BruteForce, 4);
+BENCHMARK_TEMPLATE(bench_BruteForce, 5);
+BENCHMARK_TEMPLATE(bench_BruteForce, 6);
+BENCHMARK_TEMPLATE(bench_BruteForce, 7);
+BENCHMARK_TEMPLATE(bench_BruteForce, 8);
 
 #ifdef WITH_FFTW3
 BENCHMARK_TEMPLATE(bench_FFTW, 2);

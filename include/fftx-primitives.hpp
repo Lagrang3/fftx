@@ -110,6 +110,24 @@ namespace fftx
             ep[4] * (x[1] + ep[4] * (x[2] + ep[4] * (x[3] + ep[4] * x[4])));
     }
 
+    template <std::size_t n, class iter, class T>
+    void FFT_BruteForce_fixed(iter first, const T e, const T _1 = T(1))
+    {
+        std::array<T, n> x;
+        std::copy(first, first + n, x.begin());
+        T ei = _1;
+        for (std::size_t i = 0; i < n; ++i)
+        {
+            T b = 0;
+            for (int j = n - 1; j >= 0; --j)
+            {
+                b = b * ei + x[j];
+            }
+            first[i] = b;
+            ei *= e;
+        }
+    }
+
     /*
         fixed-size FFT with n a power of two
     */
