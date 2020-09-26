@@ -28,13 +28,38 @@
 namespace fftx
 {
     /*
-        fixed-size FFT with n a power of two
+        handwritten fixed-size FFT
     */
     template <std::size_t n, class iter, class T>
-    void FFT_Handwritten_fixed(iter first, const T e, const T _1 = T(1))
+    typename std::enable_if<n == 1, void>::type
+    FFT_Handwritten_fixed(iter first, const T e, const T _1 = T(1))
     {
-        constexpr std::size_t di = 4;
-        std::array<T, n + di> x, ep;
+    }
+    template <std::size_t n, class iter, class T>
+    typename std::enable_if<n == 2, void>::type
+    FFT_Handwritten_fixed(iter first, const T e, const T _1 = T(1))
+    {
+        std::array<T, n> x;
+        std::copy(first, first + n, x.begin());
+        first[0] = x[0] + x[1];
+        first[1] = x[0] + x[1] * e;
+    }
+    template <std::size_t n, class iter, class T>
+    typename std::enable_if<n == 3, void>::type
+    FFT_Handwritten_fixed(iter first, const T e, const T _1 = T(1))
+    {
+        std::array<T, n> x;
+        T e2 = e * e;
+        std::copy(first, first + n, x.begin());
+        first[0] = x[0] + x[1] + x[2];
+        first[1] = x[0] + e * (x[1] + e * x[2]);
+        first[2] = x[0] + e2 * (x[1] + e2 * x[2]);
+    }
+    template <std::size_t n, class iter, class T>
+    typename std::enable_if<n == 4, void>::type
+    FFT_Handwritten_fixed(iter first, const T e, const T _1 = T(1))
+    {
+        std::array<T, n> x, ep;
         std::copy(first, first + n, x.begin());
         // std::copy(std::execution::unsequenced_policy,first, first + n,
         // x.begin());
@@ -42,40 +67,47 @@ namespace fftx
         ep[1] = e;
         ep[2] = e * e;
         ep[3] = e * e * e;
-        ep[4] = e * e * e * e;
-        for (std::size_t i = di + 1; i < n; i += di)
-        {
-            ep[i] = ep[i - di] * ep[di];
-            ep[i + 1] = ep[i - di + 1] * ep[di];
-            ep[i + 2] = ep[i - di + 2] * ep[di];
-            ep[i + 3] = ep[i - di + 3] * ep[di];
-        }
-        switch (n)
-        {
-            case 1:
-                return;
-            case 2:
-                first[0] = x[0] + x[1];
-                first[1] = x[0] + x[1] * e;
-                return;
-            case 3:
-                first[0] = x[0] + x[1] + x[2];
-                first[1] = x[0] + e * (x[1] + e * x[2]);
-                first[2] = x[0] + ep[2] * (x[1] + ep[2] * x[2]);
-                return;
-            case 4:
-                x[0] = first[0] + first[2];
-                x[1] = first[1] + first[3];
-                x[2] = first[0] + ep[2] * first[2];
-                x[3] = first[1] + ep[2] * first[3];
+        x[0] = first[0] + first[2];
+        x[1] = first[1] + first[3];
+        x[2] = first[0] + ep[2] * first[2];
+        x[3] = first[1] + ep[2] * first[3];
 
-                first[0] = x[0] + x[1];
-                first[1] = x[2] + e * x[3];
-                first[2] = x[0] + ep[2] * x[1];
-                first[3] = x[2] + ep[3] * x[3];
+        first[0] = x[0] + x[1];
+        first[1] = x[2] + e * x[3];
+        first[2] = x[0] + ep[2] * x[1];
+        first[3] = x[2] + ep[3] * x[3];
+    }
+    template <std::size_t n, class iter, class T>
+    typename std::enable_if<n == 5, void>::type
+    FFT_Handwritten_fixed(iter first, const T e, const T _1 = T(1))
+    {
+        /*
+        std::array<T, n> x;
+        std::copy(first, first + n, x.begin());
+        // std::copy(std::execution::unsequenced_policy,first, first + n,
+        // x.begin());
+        FFT_Handwritten_fixed<4>(first,e,_1);
 
-                return;
-        }
+        T e4=e*e*e*e,ep=e4;
+        first[0] += x[4];
+        first[1] += x[4]*ep;
+        ep*=e4; first[2] += x[4]*ep;
+        ep*=e4; first[3] += x[4]*ep;
+        ep*=e4; first[4]=x[0]+ep*(x[1]+ep*(x[2]+ep*(x[3]+ep*x[4])));
+        */
+        std::array<T, n> x, ep{_1, e, e * e, e * e * e, e * e * e * e};
+        std::copy(first, first + n, x.begin());
+        first[0] = x[0] + x[1] + x[2] + x[3] + x[4];
+        first[1] = x[0] + e * (x[1] + e * (x[2] + e * (x[3] + e * x[4])));
+        first[2] =
+            x[0] +
+            ep[2] * (x[1] + ep[2] * (x[2] + ep[2] * (x[3] + ep[2] * x[4])));
+        first[3] =
+            x[0] +
+            ep[3] * (x[1] + ep[3] * (x[2] + ep[3] * (x[3] + ep[3] * x[4])));
+        first[4] =
+            x[0] +
+            ep[4] * (x[1] + ep[4] * (x[2] + ep[4] * (x[3] + ep[4] * x[4])));
     }
 
     /*
