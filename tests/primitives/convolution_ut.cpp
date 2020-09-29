@@ -27,7 +27,7 @@ struct iterative_fft
 {
     void operator()(std::vector<T>& A, const T e) const
     {
-        FFT_Iterative_fixed<n>(A.begin(), e);
+        FFT_Iterative_fixed<n>(A.begin(), A.begin(), e);
     }
     constexpr auto size() const { return n; }
 };
@@ -37,7 +37,7 @@ struct pow2_fft
 {
     void operator()(std::vector<T>& A, const T e) const
     {
-        FFT_Power2_fixed<n>(A.begin(), e);
+        FFT_Power2_fixed<n>(A.begin(), A.begin(), e);
     }
     constexpr auto size() const { return n; }
 };

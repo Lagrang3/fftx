@@ -17,6 +17,7 @@ const double PI = acos(-1.0);
 
 std::default_random_engine gen;
 std::uniform_real_distribution<double> distribution;
+std::array<cd, 1000> out;
 
 auto random_vec(size_t N)
 {
@@ -29,23 +30,23 @@ auto random_vec(size_t N)
 template <std::size_t n>
 void bench_Power2(benchmark::State& state)
 {
-    auto data = random_vec(n);
+    const auto data = random_vec(n);
     for (auto _ : state)
     {
-        fftx::FFT_Power2_fixed<n>(data.begin(), cd(cos(2 * PI / data.size()),
-                                                   -sin(2 * PI / data.size())));
+        fftx::FFT_Power2_fixed<n>(
+            data.begin(), out.begin(),
+            cd(cos(2 * PI / data.size()), -sin(2 * PI / data.size())));
     }
 }
 
 template <std::size_t n>
 void bench_handwritten(benchmark::State& state)
 {
-    auto data = random_vec(n);
+    const auto in = random_vec(n);
     for (auto _ : state)
     {
-        fftx::FFT_Handwritten_fixed<n>(
-            data.begin(),
-            cd(cos(2 * PI / data.size()), -sin(2 * PI / data.size())));
+        fftx::FFT_Handwritten_fixed<n>(in.begin(), out.begin(),
+                                       cd(cos(2 * PI / n), -sin(2 * PI / n)));
     }
 }
 template <std::size_t n>
@@ -55,7 +56,7 @@ void bench_BruteForce(benchmark::State& state)
     for (auto _ : state)
     {
         fftx::FFT_BruteForce_fixed<n>(
-            data.begin(),
+            data.begin(), out.begin(),
             cd(cos(2 * PI / data.size()), -sin(2 * PI / data.size())));
     }
 }
