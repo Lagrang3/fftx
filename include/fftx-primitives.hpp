@@ -12,12 +12,12 @@
     - the have the signature:
 
     template <class iter, class T>
-    void FFT_*(iter first, iter last, const T e, const T _1 = T(1));
+    void FFT_*(iter first, iter last, const T e);
 
     or
 
     template <std::size_t n, class iter, class T>
-    void FFT_*(iter first, const T e, const T _1 = T(1));
+    void FFT_*(iter first, const T e);
     // here the last is not necessary because n gives the size of the container
 
     - they solve the FT in-place
@@ -32,12 +32,12 @@ namespace fftx
     */
     template <std::size_t n, class iter, class T>
     typename std::enable_if<n == 1, void>::type
-    FFT_Handwritten_fixed(iter first, const T e, const T _1 = T(1))
+    FFT_Handwritten_fixed(iter first, const T e)
     {
     }
     template <std::size_t n, class iter, class T>
     typename std::enable_if<n == 2, void>::type
-    FFT_Handwritten_fixed(iter first, const T e, const T _1 = T(1))
+    FFT_Handwritten_fixed(iter first, const T e)
     {
         std::array<T, n> x;
         std::copy(first, first + n, x.begin());
@@ -46,7 +46,7 @@ namespace fftx
     }
     template <std::size_t n, class iter, class T>
     typename std::enable_if<n == 3, void>::type
-    FFT_Handwritten_fixed(iter first, const T e, const T _1 = T(1))
+    FFT_Handwritten_fixed(iter first, const T e)
     {
         std::array<T, n> x;
         T e2 = e * e;
@@ -57,12 +57,9 @@ namespace fftx
     }
     template <std::size_t n, class iter, class T>
     typename std::enable_if<n == 4, void>::type
-    FFT_Handwritten_fixed(iter first, const T e, const T _1 = T(1))
+    FFT_Handwritten_fixed(iter first, const T e)
     {
         std::array<T, n> x;
-        std::copy(first, first + n, x.begin());
-        // std::copy(std::execution::unsequenced_policy,first, first + n,
-        // x.begin());
         T e2 = e * e, e3 = e2 * e;
         x[0] = first[0] + first[2];
         x[1] = first[1] + first[3];
@@ -76,7 +73,7 @@ namespace fftx
     }
     template <std::size_t n, class iter, class T>
     typename std::enable_if<n == 5, void>::type
-    FFT_Handwritten_fixed(iter first, const T e, const T _1 = T(1))
+    FFT_Handwritten_fixed(iter first, const T e)
     {
         std::array<T, n> x;
         T e2 = e * e, e3 = e2 * e, e4 = e3 * e;
@@ -94,15 +91,23 @@ namespace fftx
     }
 
     template <std::size_t n, class iter, class T>
-    void FFT_BruteForce_fixed(iter first, const T e, const T _1 = T(1))
+    void FFT_BruteForce_fixed(iter first, const T e)
     {
+        if(n==1)return;
         std::array<T, n> x;
         std::copy(first, first + n, x.begin());
-        T ei = _1;
-        for (std::size_t i = 0; i < n; ++i)
+        
+        // we cannot assume that T{0} is the null element  
+        // we actually don't need the null element
+        first[0]=x[0];
+        for (std::size_t i = 1; i < n; ++i)
+            first[0] += x[i];
+        
+        T ei = e;
+        for (std::size_t i = 1; i < n; ++i)
         {
-            T b = 0;
-            for (int j = n - 1; j >= 0; --j)
+            T b = x[n-1];
+            for (int j = n - 2; j >= 0; --j)
             {
                 b = b * ei + x[j];
             }
@@ -115,9 +120,10 @@ namespace fftx
         fixed-size FFT with n a power of two
     */
     template <std::size_t n, class iter, class T>
-    void FFT_Power2_fixed(iter first, const T e, const T _1 = T(1))
+    void FFT_Power2_fixed(iter first, const T e)
     {
-        T f = power(e, n / 2, _1);
+        if(n==1)return;
+        T f = power(e, n / 2);
         int nbits = 0;
         std::vector<T> e2{e};
         for (int m = n / 2; m > 0; m >>= 1, ++nbits)
@@ -143,8 +149,15 @@ namespace fftx
         {
             for (std::size_t i = 0; i < n; i += len)
             {
-                T ej = _1;
-                for (std::size_t j = 0; j < len / 2; ++j)
+                {
+                    // j=0
+                    iter u = first + i, v = first + i + len / 2;
+                    T Bu = *u, Bv = *v;
+                    *u = Bu + Bv;
+                    *v = Bu + Bv * f;
+                }    
+                T ej = e2[k];
+                for (std::size_t j = 1; j < len / 2; ++j)
                 {
                     iter u = first + i + j, v = first + i + j + len / 2;
                     T Bu = *u, Bv = *v * ej;
@@ -160,8 +173,9 @@ namespace fftx
         fixed-size FFT with n any number
     */
     template <std::size_t n, class iter, class T>
-    void FFT_Iterative_fixed(iter first, const T e, const T _1 = T(1))
+    void FFT_Iterative_fixed(iter first, const T e)
     {
+        if(n==1)return;
         std::vector<T> B(n), B_old(n);
         auto P = prime_factorization(n);
 
@@ -186,15 +200,24 @@ namespace fftx
             int len_old = len;
             len *= p;
             std::swap(B, B_old);
-            T e2 = power(e, n / len);
+            T e2 = power(e, n / len); // len<=n and len divides n
 
             for (std::size_t i = 0; i < n; i += len)
             {
-                T ej = _1;
-                for (std::size_t j = 0; j < len; ++j, ej *= e2)
                 {
-                    T b = 0;
-                    for (int k = p - 1; k >= 0; --k)
+                    // j =0 
+                    T b = B_old[i + (p-1) * len_old];
+                    for (int k = p - 2; k >= 0; --k)
+                    {
+                        b  += B_old[i + k * len_old];
+                    }
+                    B[i] = b;
+                }
+                T ej = e2;
+                for (std::size_t j = 1; j < len; ++j, ej *= e2)
+                {
+                    T b = B_old[i + (p-1) * len_old + j % len_old];
+                    for (int k = p - 2; k >= 0; --k)
                     {
                         b = b * ej + B_old[i + k * len_old + j % len_old];
                     }

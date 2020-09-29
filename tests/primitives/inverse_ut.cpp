@@ -25,9 +25,9 @@ const double PI = acos(-1.0);
 template <std::size_t n, class T>
 struct iterative_fft
 {
-    void operator()(std::vector<T>& A, const T e, const T _1) const
+    void operator()(std::vector<T>& A, const T e) const
     {
-        FFT_Iterative_fixed<n>(A.begin(), e, _1);
+        FFT_Iterative_fixed<n>(A.begin(), e);
     }
     constexpr auto size() const { return n; }
 };
@@ -35,9 +35,9 @@ struct iterative_fft
 template <std::size_t n, class T>
 struct pow2_fft
 {
-    void operator()(std::vector<T>& A, const T e, const T _1) const
+    void operator()(std::vector<T>& A, const T e) const
     {
-        FFT_Power2_fixed<n>(A.begin(), e, _1);
+        FFT_Power2_fixed<n>(A.begin(), e);
     }
     constexpr auto size() const { return n; }
 };
@@ -45,9 +45,9 @@ struct pow2_fft
 template <std::size_t n, class T>
 struct handwritten_fft
 {
-    void operator()(std::vector<T>& A, const T e, const T _1) const
+    void operator()(std::vector<T>& A, const T e) const
     {
-        FFT_Handwritten_fixed<n>(A.begin(), e, _1);
+        FFT_Handwritten_fixed<n>(A.begin(), e);
     }
     constexpr auto size() const { return n; }
 };
@@ -55,9 +55,9 @@ struct handwritten_fft
 template <std::size_t n, class T>
 struct bruteforce_fft
 {
-    void operator()(std::vector<T>& A, const T e, const T _1) const
+    void operator()(std::vector<T>& A, const T e) const
     {
-        FFT_BruteForce_fixed<n>(A.begin(), e, _1);
+        FFT_BruteForce_fixed<n>(A.begin(), e);
     }
     constexpr auto size() const { return n; }
 };
@@ -72,8 +72,8 @@ void test_func_inverse(const std::vector<cd>& data)
 
     std::copy(data.begin(), data.begin() + N, B.begin());
 
-    callable(B, cd(cos(2 * PI / N), sin(2 * PI / N)), 1);
-    callable(B, cd(cos(2 * PI / N), -sin(2 * PI / N)), 1);
+    callable(B, cd(cos(2 * PI / N), sin(2 * PI / N)));
+    callable(B, cd(cos(2 * PI / N), -sin(2 * PI / N)));
 
     double inv_N = 1.0 / N;
     for (auto& x : B)

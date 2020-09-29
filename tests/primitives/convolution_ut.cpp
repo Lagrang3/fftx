@@ -25,9 +25,9 @@ const double PI = acos(-1.0);
 template <std::size_t n, class T>
 struct iterative_fft
 {
-    void operator()(std::vector<T>& A, const T e, const T _1) const
+    void operator()(std::vector<T>& A, const T e) const
     {
-        FFT_Iterative_fixed<n>(A.begin(), e, _1);
+        FFT_Iterative_fixed<n>(A.begin(), e);
     }
     constexpr auto size() const { return n; }
 };
@@ -35,9 +35,9 @@ struct iterative_fft
 template <std::size_t n, class T>
 struct pow2_fft
 {
-    void operator()(std::vector<T>& A, const T e, const T _1) const
+    void operator()(std::vector<T>& A, const T e) const
     {
-        FFT_Power2_fixed<n>(A.begin(), e, _1);
+        FFT_Power2_fixed<n>(A.begin(), e);
     }
     constexpr auto size() const { return n; }
 };
@@ -65,14 +65,14 @@ void test_func_convolution(const std::vector<cd>& cA, const std::vector<cd>& cB)
     // done
 
     // FFT-based convolution
-    callable(A, cd(cos(2 * PI / N), sin(2 * PI / N)), 1);
-    callable(B, cd(cos(2 * PI / N), sin(2 * PI / N)), 1);
+    callable(A, cd(cos(2 * PI / N), sin(2 * PI / N)));
+    callable(B, cd(cos(2 * PI / N), sin(2 * PI / N)));
 
     std::vector<cd> C2(N);
     for (std::size_t i = 0; i < N; ++i)
         C2[i] = A[i] * B[i];
 
-    callable(C2, cd(cos(2 * PI / N), -sin(2 * PI / N)), 1);
+    callable(C2, cd(cos(2 * PI / N), -sin(2 * PI / N)));
 
     double inv_n = 1.0 / N;
     for (auto& x : C2)
