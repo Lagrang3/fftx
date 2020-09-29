@@ -52,30 +52,27 @@ namespace fftx
         T e2 = e * e;
         std::copy(first, first + n, x.begin());
         first[0] = x[0] + x[1] + x[2];
-        first[1] = x[0] + e * (x[1] + e * x[2]);
-        first[2] = x[0] + e2 * (x[1] + e2 * x[2]);
+        first[1] = x[0] + e * x[1] + e2 * x[2];
+        first[2] = x[0] + e2 * x[1] + e2 * e2 * x[2];
     }
     template <std::size_t n, class iter, class T>
     typename std::enable_if<n == 4, void>::type
     FFT_Handwritten_fixed(iter first, const T e, const T _1 = T(1))
     {
-        std::array<T, n> x, ep;
+        std::array<T, n> x;
         std::copy(first, first + n, x.begin());
         // std::copy(std::execution::unsequenced_policy,first, first + n,
         // x.begin());
-        ep[0] = _1;
-        ep[1] = e;
-        ep[2] = e * e;
-        ep[3] = e * e * e;
+        T e2 = e * e, e3 = e2 * e;
         x[0] = first[0] + first[2];
         x[1] = first[1] + first[3];
-        x[2] = first[0] + ep[2] * first[2];
-        x[3] = first[1] + ep[2] * first[3];
+        x[2] = first[0] + e2 * first[2];
+        x[3] = first[1] + e2 * first[3];
 
         first[0] = x[0] + x[1];
         first[1] = x[2] + e * x[3];
-        first[2] = x[0] + ep[2] * x[1];
-        first[3] = x[2] + ep[3] * x[3];
+        first[2] = x[0] + e2 * x[1];
+        first[3] = x[2] + e3 * x[3];
     }
     template <std::size_t n, class iter, class T>
     typename std::enable_if<n == 5, void>::type
