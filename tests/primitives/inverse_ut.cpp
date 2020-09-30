@@ -182,7 +182,7 @@ struct inverse_test_suite : public test_suite
         test_linrange<1, 10>(A, *this);
         test_powrange<1, 128>(A, *this);
 
-        test_linrange_handwritten<1, 6>(A, *this);
+        test_linrange_handwritten<1, 7>(A, *this);
         test_linrange_bruteforce<1, 10>(A, *this);
     }
 };

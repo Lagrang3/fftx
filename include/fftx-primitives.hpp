@@ -103,10 +103,35 @@ namespace fftx
     }
 
     template <std::size_t n, class iter1, class iter2, class T>
+    typename std::enable_if<n == 6, void>::type FFT_Handwritten_fixed(iter1 in,
+                                                                      iter2 out,
+                                                                      const T e)
+    {
+        std::array<T, n> x;
+        T e2 = e * e, e3 = e2 * e, e4 = e2 * e2, e5 = e4 * e;
+
+        x[0] = in[0] + in[3];
+        x[1] = in[0] + e3 * in[3];
+        x[2] = in[1] + in[4];
+        x[3] = in[1] + e3 * in[4];
+        x[4] = in[2] + in[5];
+        x[5] = in[2] + e3 * in[5];
+
+        out[0] = x[0] + x[2] + x[4];
+        out[2] = x[0] + e2 * x[2] + e4 * x[4];
+        out[4] = x[0] + e4 * x[2] + e2 * x[4];
+
+        out[1] = x[1] + e * x[3] + e2 * x[5];
+        out[3] = x[1] + e3 * x[3] + x[5];
+        out[5] = x[1] + e5 * x[3] + e4 * x[5];
+    }
+
+    template <std::size_t n, class iter1, class iter2, class T>
     void FFT_BruteForce_fixed(iter1 in, iter2 out, const T e)
     {
         if (n == 1)
             out[0] = in[0];
+
         std::array<T, n> x;
         std::copy(in, in + n, x.begin());
 

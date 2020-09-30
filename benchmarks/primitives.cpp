@@ -60,6 +60,17 @@ void bench_BruteForce(benchmark::State& state)
             cd(cos(2 * PI / data.size()), -sin(2 * PI / data.size())));
     }
 }
+template <std::size_t n>
+void bench_Iterative(benchmark::State& state)
+{
+    auto data = random_vec(n);
+    for (auto _ : state)
+    {
+        fftx::FFT_Iterative_fixed<n>(
+            data.begin(), out.begin(),
+            cd(cos(2 * PI / data.size()), -sin(2 * PI / data.size())));
+    }
+}
 
 #ifdef WITH_FFTW3
 template <std::size_t n>
@@ -97,6 +108,7 @@ BENCHMARK_TEMPLATE(bench_handwritten, 2);
 BENCHMARK_TEMPLATE(bench_handwritten, 3);
 BENCHMARK_TEMPLATE(bench_handwritten, 4);
 BENCHMARK_TEMPLATE(bench_handwritten, 5);
+BENCHMARK_TEMPLATE(bench_handwritten, 6);
 
 BENCHMARK_TEMPLATE(bench_BruteForce, 2);
 BENCHMARK_TEMPLATE(bench_BruteForce, 3);
@@ -105,6 +117,14 @@ BENCHMARK_TEMPLATE(bench_BruteForce, 5);
 BENCHMARK_TEMPLATE(bench_BruteForce, 6);
 BENCHMARK_TEMPLATE(bench_BruteForce, 7);
 BENCHMARK_TEMPLATE(bench_BruteForce, 8);
+
+BENCHMARK_TEMPLATE(bench_Iterative, 2);
+BENCHMARK_TEMPLATE(bench_Iterative, 3);
+BENCHMARK_TEMPLATE(bench_Iterative, 4);
+BENCHMARK_TEMPLATE(bench_Iterative, 5);
+BENCHMARK_TEMPLATE(bench_Iterative, 6);
+BENCHMARK_TEMPLATE(bench_Iterative, 7);
+BENCHMARK_TEMPLATE(bench_Iterative, 8);
 
 #ifdef WITH_FFTW3
 BENCHMARK_TEMPLATE(bench_FFTW, 2);
