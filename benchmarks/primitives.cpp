@@ -109,6 +109,7 @@ BENCHMARK_TEMPLATE(bench_handwritten, 3);
 BENCHMARK_TEMPLATE(bench_handwritten, 4);
 BENCHMARK_TEMPLATE(bench_handwritten, 5);
 BENCHMARK_TEMPLATE(bench_handwritten, 6);
+BENCHMARK_TEMPLATE(bench_handwritten, 7);
 
 BENCHMARK_TEMPLATE(bench_BruteForce, 2);
 BENCHMARK_TEMPLATE(bench_BruteForce, 3);
