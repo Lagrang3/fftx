@@ -11,6 +11,13 @@
 
 namespace fftx
 {
+    template <class T>
+    std::vector<T> FFT_InPlace(const std::vector<T>& A,
+                               const T e,
+                               const T _1 = T(1));
+    template <class iter, class T>
+    void FFT_InPlace(iter first, iter last, const T e, const T _1 = T(1));
+
     /*
         Brute force implementation of the Discrete Fourier transform.
     */
@@ -41,7 +48,7 @@ namespace fftx
     */
 
     template <class iter, class T>
-    void FFT_InPlace(iter first, iter last, const T e, const T _1 = T(1))
+    void FFT_InPlace(iter first, iter last, const T e, const T _1)
     {
         const int n = std::distance(first, last);
         if (__builtin_popcount(n) != 1)
@@ -147,20 +154,50 @@ namespace fftx
         This implementation uses recursion.
     */
     template <class T>
-    std::vector<T> FFT_DivideAndConquer(const std::vector<T>& A,
-                                        const T e,
-                                        const T _1 = T(1))
+    std::vector<T> __FFT_DivideAndConquer(const std::vector<T>& A,
+                                          const T e,
+                                          const T _1 = T(1),
+                                          std::vector<int> factors = {})
     {
         const int n = A.size();
+        if (n < 8)
+        {
+            std::vector<T> B(n);
+            switch (n)
+            {
+                case 2:
+                    FFT_Handwritten_fixed<2>(A.begin(), B.begin(), e);
+                    break;
+                case 3:
+                    FFT_Handwritten_fixed<3>(A.begin(), B.begin(), e);
+                    break;
+                case 4:
+                    FFT_Handwritten_fixed<4>(A.begin(), B.begin(), e);
+                    break;
+                case 5:
+                    FFT_Handwritten_fixed<5>(A.begin(), B.begin(), e);
+                    break;
+                case 6:
+                    FFT_Handwritten_fixed<6>(A.begin(), B.begin(), e);
+                    break;
+                case 7:
+                    FFT_Handwritten_fixed<7>(A.begin(), B.begin(), e);
+                    break;
+                default:
+                    // should not arrive here
+                    ;
+            }
+            return B;
+        }
 
-        if (n == 1)
-            return A;
+        if (factors.back() == 2)
+            return FFT_InPlace<T>(A, e, _1);
 
-        const int p = prime_factor(n);
-
-        if (p == n)
+        if (factors.size() == 1)
             return FFT_BruteForce(A, e, _1);
 
+        const int p = factors.back();
+        factors.pop_back();
         const int m = n / p;
         const auto ep = power(e, p);
 
@@ -172,7 +209,7 @@ namespace fftx
             for (int j = 0; j < m; ++j)
                 A_sub[i][j] = A[j * p + i];
 
-            A_sub[i] = FFT_DivideAndConquer(A_sub[i], ep, _1);
+            A_sub[i] = __FFT_DivideAndConquer(A_sub[i], ep, _1, factors);
         }
 
         T ek = _1;
@@ -188,6 +225,20 @@ namespace fftx
         }
 
         return B;
+    }
+    template <class T>
+    std::vector<T> FFT_DivideAndConquer(const std::vector<T>& A,
+                                        const T e,
+                                        const T _1 = T(1))
+    {
+        const int n = A.size();
+
+        if (n == 1)
+            return A;
+
+        auto factors = prime_factorization(n);
+
+        return __FFT_DivideAndConquer<T>(A, e, _1, factors);
     }
 
     /*
@@ -284,9 +335,7 @@ namespace fftx
         In Place wrapper
     */
     template <class T>
-    std::vector<T> FFT_InPlace(const std::vector<T>& A,
-                               const T e,
-                               const T _1 = T(1))
+    std::vector<T> FFT_InPlace(const std::vector<T>& A, const T e, const T _1)
     {
         std::vector<T> B(A);
         FFT_InPlace(B.begin(), B.end(), e, _1);

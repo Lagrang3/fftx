@@ -125,14 +125,14 @@ namespace fftx
         out[3] = x[1] + e3 * x[3] + x[5];
         out[5] = x[1] + e5 * x[3] + e4 * x[5];
     }
-    
+
     template <std::size_t n, class iter1, class iter2, class T>
     typename std::enable_if<n == 7, void>::type FFT_Handwritten_fixed(iter1 in,
                                                                       iter2 out,
                                                                       const T e)
     {
         std::array<T, n> x;
-        T e2 = e * e, e3 = e2 * e, e4 = e3 * e, e5=e4*e, e6=e5*e;
+        T e2 = e * e, e3 = e2 * e, e4 = e3 * e, e5 = e4 * e, e6 = e5 * e;
         std::copy(in, in + n, x.begin());
 
         out[0] = x[0] + x[1] + x[2] + x[3] + x[4] + x[5] + x[6];
