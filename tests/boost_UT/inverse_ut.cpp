@@ -28,9 +28,8 @@ void test_func_inverse(fft_type callable, const std::vector<cd>& data)
     const size_t N = data.size();
     BOOST_REQUIRE(data.size() > 0);
 
-    auto FT_data = callable(data, cd(cos(2 * PI / N), sin(2 * PI / N)), 1);
-    auto FT_FT_data =
-        callable(FT_data, cd(cos(2 * PI / N), -sin(2 * PI / N)), 1);
+    auto FT_data = callable(data, cd(cos(2 * PI / N), sin(2 * PI / N)));
+    auto FT_FT_data = callable(FT_data, cd(cos(2 * PI / N), -sin(2 * PI / N)));
 
     BOOST_REQUIRE(data.size() == FT_data.size() and
                   data.size() == FT_FT_data.size());

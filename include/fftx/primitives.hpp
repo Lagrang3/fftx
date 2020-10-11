@@ -183,7 +183,10 @@ namespace fftx
     void FFT_Power2_fixed(iter1 in, iter2 out, const T e)
     {
         if (n == 1)
+        {
             out[0] = in[0];
+            return;
+        }
         std::array<T, n> x;
         std::copy(in, in + n, x.begin());
 

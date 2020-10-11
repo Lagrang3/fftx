@@ -32,7 +32,7 @@ void bench_BruteForce(benchmark::State& state)
     for (auto _ : state)
     {
         fftx::FFT_BruteForce<cd>(
-            data, cd(cos(2 * PI / data.size()), -sin(2 * PI / data.size())), 1);
+            data, cd(cos(2 * PI / data.size()), -sin(2 * PI / data.size())));
     }
     state.SetComplexityN(state.range(0));
 }
@@ -43,7 +43,7 @@ void bench_InPlace(benchmark::State& state)
     for (auto _ : state)
     {
         fftx::FFT_InPlace<cd>(
-            data, cd(cos(2 * PI / data.size()), -sin(2 * PI / data.size())), 1);
+            data, cd(cos(2 * PI / data.size()), -sin(2 * PI / data.size())));
     }
     state.SetComplexityN(state.range(0));
 }
@@ -54,7 +54,7 @@ void bench_DivideAndConquer(benchmark::State& state)
     for (auto _ : state)
     {
         fftx::FFT_DivideAndConquer<cd>(
-            data, cd(cos(2 * PI / data.size()), -sin(2 * PI / data.size())), 1);
+            data, cd(cos(2 * PI / data.size()), -sin(2 * PI / data.size())));
     }
     state.SetComplexityN(state.range(0));
 }
@@ -64,7 +64,7 @@ void bench_Iterative(benchmark::State& state)
     for (auto _ : state)
     {
         fftx::FFT_Iterative<cd>(
-            data, cd(cos(2 * PI / data.size()), -sin(2 * PI / data.size())), 1);
+            data, cd(cos(2 * PI / data.size()), -sin(2 * PI / data.size())));
     }
     state.SetComplexityN(state.range(0));
 }

@@ -45,14 +45,14 @@ void test_func_convolution(fft_type callable,
     // done
 
     // FFT-based convolution
-    auto FA = callable(A, cd(cos(2 * PI / N), sin(2 * PI / N)), 1);
-    auto FB = callable(B, cd(cos(2 * PI / N), sin(2 * PI / N)), 1);
+    auto FA = callable(A, cd(cos(2 * PI / N), sin(2 * PI / N)));
+    auto FB = callable(B, cd(cos(2 * PI / N), sin(2 * PI / N)));
 
     std::vector<cd> FC(N);
     for (int i = 0; i < N; ++i)
         FC[i] = FA[i] * FB[i];
 
-    auto C2 = callable(FC, cd(cos(2 * PI / N), -sin(2 * PI / N)), 1);
+    auto C2 = callable(FC, cd(cos(2 * PI / N), -sin(2 * PI / N)));
 
     double inv_n = 1.0 / N;
     for (auto& x : C2)
