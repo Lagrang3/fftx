@@ -98,6 +98,25 @@ void bench_FFTW(benchmark::State& state)
 }
 #endif
 
+#ifdef WITH_ALGLIB
+#    include "fasttransforms.h"
+#    include "stdafx.h"
+template <std::size_t n>
+void bench_ALGLIB(benchmark::State& state)
+{
+    auto data = random_vec(n);
+    alglib::complex_1d_array v;
+    v.setlength(data.size());
+
+    for (auto _ : state)
+    {
+        for (std::size_t i = 0; i < data.size(); ++i)
+            v[i] = alglib::complex(data[i].real(), data[i].imag());
+        alglib::fftc1d(v);
+    }
+}
+#endif
+
 BENCHMARK_TEMPLATE(bench_Power2, 2);
 BENCHMARK_TEMPLATE(bench_Power2, 4);
 BENCHMARK_TEMPLATE(bench_Power2, 8);
@@ -137,6 +156,18 @@ BENCHMARK_TEMPLATE(bench_FFTW, 7);
 BENCHMARK_TEMPLATE(bench_FFTW, 8);
 BENCHMARK_TEMPLATE(bench_FFTW, 16);
 BENCHMARK_TEMPLATE(bench_FFTW, 32);
+#endif
+
+#ifdef WITH_ALGLIB
+BENCHMARK_TEMPLATE(bench_ALGLIB, 2);
+BENCHMARK_TEMPLATE(bench_ALGLIB, 3);
+BENCHMARK_TEMPLATE(bench_ALGLIB, 4);
+BENCHMARK_TEMPLATE(bench_ALGLIB, 5);
+BENCHMARK_TEMPLATE(bench_ALGLIB, 6);
+BENCHMARK_TEMPLATE(bench_ALGLIB, 7);
+BENCHMARK_TEMPLATE(bench_ALGLIB, 8);
+BENCHMARK_TEMPLATE(bench_ALGLIB, 16);
+BENCHMARK_TEMPLATE(bench_ALGLIB, 32);
 #endif
 
 BENCHMARK_MAIN();
