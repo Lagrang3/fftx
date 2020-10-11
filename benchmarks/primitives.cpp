@@ -9,8 +9,8 @@
 
 #include <benchmark/benchmark.h>
 
-#include <fftx-1d.hpp>
-#include <fftx-primitives.hpp>
+#include <fftx/1d.hpp>
+#include <fftx/primitives.hpp>
 
 typedef std::complex<double> cd;
 const double PI = acos(-1.0);

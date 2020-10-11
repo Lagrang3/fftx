@@ -1,6 +1,6 @@
 #pragma once
 
-#include <fftx-1d.hpp>
+#include <fftx/1d.hpp>
 #include <memory>
 
 namespace fftx

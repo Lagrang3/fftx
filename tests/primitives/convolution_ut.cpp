@@ -10,7 +10,7 @@
 #include <list>
 #include <random>
 
-#include <fftx-primitives.hpp>
+#include <fftx/primitives.hpp>
 
 using namespace boost::unit_test;
 using namespace boost;

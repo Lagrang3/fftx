@@ -6,8 +6,8 @@
 #include <string>
 #include <vector>
 
-#include <fftx-math.hpp>
-#include <fftx-primitives.hpp>
+#include <fftx/math.hpp>
+#include <fftx/primitives.hpp>
 
 namespace fftx
 {

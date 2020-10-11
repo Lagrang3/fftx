@@ -1,9 +1,3 @@
 incl = [include_directories('.')]
-
-headers += [files([
-    'fftx.hpp',
-    'fftx-1d.hpp',
-    'fftx-nd.hpp',
-    'fftx-math.hpp',
-    'fftx-primitives.hpp'])]
-
+headers += [files(['fftx.hpp'])]
+subdir('fftx')

@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <vector>
 
-#include <fftx-math.hpp>
+#include <fftx/math.hpp>
 
 /*
     Primitive Fourier transforms.
