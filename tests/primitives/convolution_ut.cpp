@@ -1,3 +1,6 @@
+#ifndef BOOST_TEST_DYN_LINK
+#define BOOST_TEST_DYN_LINK
+#endif
 #include <boost/test/parameterized_test.hpp>
 #include <boost/test/tools/floating_point_comparison.hpp>
 #include <boost/test/unit_test.hpp>
@@ -156,9 +159,13 @@ struct convolution_test_suite : public test_suite
     }
 };
 
-test_suite* init_unit_test_suite(int argc, char* argv[])
+bool init_unit_test_suite()
 {
     framework::master_test_suite().p_name.value = "Test FFTX primitives";
     framework::master_test_suite().add(new convolution_test_suite);
-    return 0;
+    return true;
+}
+int main(int argc,char* argv[])
+{
+    return ::boost::unit_test::unit_test_main(&init_unit_test_suite,argc,argv);
 }
