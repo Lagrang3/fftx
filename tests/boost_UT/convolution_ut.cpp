@@ -1,5 +1,5 @@
 #ifndef BOOST_TEST_DYN_LINK
-#define BOOST_TEST_DYN_LINK
+#    define BOOST_TEST_DYN_LINK
 #endif
 #include <boost/test/parameterized_test.hpp>
 #include <boost/test/tools/floating_point_comparison.hpp>
@@ -150,7 +150,8 @@ bool init_unit_test_suite()
     framework::master_test_suite().add(new convolution_test_suite);
     return true;
 }
-int main(int argc,char* argv[])
+int main(int argc, char* argv[])
 {
-    return ::boost::unit_test::unit_test_main(&init_unit_test_suite,argc,argv);
+    return ::boost::unit_test::unit_test_main(&init_unit_test_suite, argc,
+                                              argv);
 }

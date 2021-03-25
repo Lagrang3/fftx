@@ -1,5 +1,5 @@
 #ifndef BOOST_TEST_DYN_LINK
-#define BOOST_TEST_DYN_LINK
+#    define BOOST_TEST_DYN_LINK
 #endif
 #include <boost/test/parameterized_test.hpp>
 #include <boost/test/tools/floating_point_comparison.hpp>
@@ -91,18 +91,15 @@ void test_func_inverse(const std::vector<cd>& data)
     BOOST_CHECK_SMALL(diff, /*tolerance*/ 1e-10);
 }
 
-struct inverse_test_suite;
-
 template <std::size_t beg, std::size_t end>
 typename std::enable_if<beg >= end, void>::type test_linrange(
-    const std::vector<cd>& A,
-    inverse_test_suite& TS)
+    const std::vector<cd>& A [[maybe_unused]],
+    test_suite& TS [[maybe_unused]])
 {
 }
 template <std::size_t beg, std::size_t end>
     typename std::enable_if <
-    beg<end, void>::type test_linrange(const std::vector<cd>& A,
-                                       inverse_test_suite& TS)
+    beg<end, void>::type test_linrange(const std::vector<cd>& A, test_suite& TS)
 {
     TS.add(BOOST_TEST_CASE_NAME(
         std::bind(&test_func_inverse<iterative_fft<beg, cd>>, A),
@@ -112,14 +109,13 @@ template <std::size_t beg, std::size_t end>
 
 template <std::size_t beg, std::size_t end>
 typename std::enable_if<beg >= end, void>::type test_powrange(
-    const std::vector<cd>& A,
-    inverse_test_suite& TS)
+    const std::vector<cd>& A [[maybe_unused]],
+    test_suite& TS [[maybe_unused]])
 {
 }
 template <std::size_t beg, std::size_t end>
     typename std::enable_if <
-    beg<end, void>::type test_powrange(const std::vector<cd>& A,
-                                       inverse_test_suite& TS)
+    beg<end, void>::type test_powrange(const std::vector<cd>& A, test_suite& TS)
 {
     TS.add(BOOST_TEST_CASE_NAME(
         std::bind(&test_func_inverse<pow2_fft<beg, cd>>, A),
@@ -129,14 +125,14 @@ template <std::size_t beg, std::size_t end>
 
 template <std::size_t beg, std::size_t end>
 typename std::enable_if<beg >= end, void>::type test_linrange_handwritten(
-    const std::vector<cd>& A,
-    inverse_test_suite& TS)
+    const std::vector<cd>& A [[maybe_unused]],
+    test_suite& TS [[maybe_unused]])
 {
 }
 template <std::size_t beg, std::size_t end>
     typename std::enable_if <
     beg<end, void>::type test_linrange_handwritten(const std::vector<cd>& A,
-                                                   inverse_test_suite& TS)
+                                                   test_suite& TS)
 {
     TS.add(BOOST_TEST_CASE_NAME(
         std::bind(&test_func_inverse<handwritten_fft<beg, cd>>, A),
@@ -146,14 +142,14 @@ template <std::size_t beg, std::size_t end>
 
 template <std::size_t beg, std::size_t end>
 typename std::enable_if<beg >= end, void>::type test_linrange_bruteforce(
-    const std::vector<cd>& A,
-    inverse_test_suite& TS)
+    const std::vector<cd>& A [[maybe_unused]],
+    test_suite& TS [[maybe_unused]])
 {
 }
 template <std::size_t beg, std::size_t end>
     typename std::enable_if <
     beg<end, void>::type test_linrange_bruteforce(const std::vector<cd>& A,
-                                                  inverse_test_suite& TS)
+                                                  test_suite& TS)
 {
     TS.add(BOOST_TEST_CASE_NAME(
         std::bind(&test_func_inverse<bruteforce_fft<beg, cd>>, A),
@@ -196,7 +192,8 @@ bool init_unit_test_suite()
     framework::master_test_suite().add(new inverse_test_suite);
     return true;
 }
-int main(int argc,char* argv[])
+int main(int argc, char* argv[])
 {
-    return ::boost::unit_test::unit_test_main(&init_unit_test_suite,argc,argv);
+    return ::boost::unit_test::unit_test_main(&init_unit_test_suite, argc,
+                                              argv);
 }

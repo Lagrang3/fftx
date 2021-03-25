@@ -9,6 +9,32 @@ Dependencies
 - [FFTW](http://fftw.org/)
 - [google/benchmark](https://github.com/google/benchmark)
 - [alglib](https://www.alglib.net/)
+- [meson](https://mesonbuild.com/)
+
+How to use this repository
+===
+
+This is a header only library, to use it is enough to pass a 
+`-I<path to include directory>` compiler flag to your application build instructions.
+
+The full functionality of the repository is achieved by using `meson`
+buildsystem tools. For instance:
+```
+cd <path to build directory>
+meson <path to source directory> --prefix=<path to install directory>
+```
+Unit tests can be run by issuing
+```
+meson test
+```
+and the library will be installed in the `<path to install directory>` once you
+type
+```
+meson install
+```
+
+Benchmark executables will be built under `benchmarks` directory.
+
 
 To-do
 ===

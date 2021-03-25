@@ -31,9 +31,8 @@ namespace fftx
         handwritten fixed-size FFT
     */
     template <std::size_t n, class iter1, class iter2, class T>
-    typename std::enable_if<n == 1, void>::type FFT_Handwritten_fixed(iter1 in,
-                                                                      iter2 out,
-                                                                      const T e)
+    typename std::enable_if<n == 1, void>::type
+    FFT_Handwritten_fixed(iter1 in, iter2 out, const T e [[maybe_unused]])
     {
         out[0] = in[0];
     }
@@ -166,10 +165,10 @@ namespace fftx
         T ei = e;
         for (std::size_t i = 1; i < n; ++i)
         {
-            T b = x[n - 1];
-            for (int j = n - 2; j >= 0; --j)
+            T b{};
+            for (auto x_it = x.rbegin(); x_it != x.rend(); ++x_it)
             {
-                b = b * ei + x[j];
+                b = b * ei + *x_it;
             }
             out[i] = b;
             ei *= e;
