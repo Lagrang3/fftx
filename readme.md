@@ -35,6 +35,14 @@ meson install
 
 Benchmark executables will be built under `benchmarks` directory.
 
+Benchmarks
+===
+
+Comparison of double precision complex 1-dimensional DFT for power-of-two sizes,
+on Intel(R) Core(TM) i7-9750H CPU @ 2.60GHz. Speed is measured in MFlops,
+defined as *5 n log_2(n) /t* where *t* is the time in micro-seconds and *n* is
+the size of the transform.
+![](assets/powers-2.png)
 
 To-do
 ===
