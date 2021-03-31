@@ -6,7 +6,7 @@ A template library for Fast Fourier Transform.
 Quick example
 ===
 
-This is a code snipper from `explamples/ex01.cpp`
+This is a code snippet from `examples/ex01.cpp`
 ```
 ...
 using cd = std::complex<double>;
@@ -26,7 +26,7 @@ g++ -std=c++17 examples/ex01.cpp -o ex01 -I include
 Dependencies
 ===
 
-None actually. This is header only library.
+None actually.
 
 The following dependencies are needed for building the unit tests:
 - [meson](https://mesonbuild.com/)
@@ -68,10 +68,12 @@ Comparison of double precision complex 1-dimensional DFT for power-of-two sizes,
 on Intel(R) Core(TM) i7-9750H CPU @ 2.60GHz. Speed is measured in MFlops,
 defined as *5 n log_2(n) /t* where *t* is the time in micro-seconds and *n* is
 the size of the transform.
+
 ![](assets/powers-2.png)
 
 To-do
 ===
+- UPDATE THE TO-DO LIST
 - consider the case when the algebra is non-abelian
 - FFT algorithms do not depend on the value of the unity,
 thus `const T _1 = T{1}` must be removed.
