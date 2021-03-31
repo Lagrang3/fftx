@@ -3,13 +3,39 @@ FFTX
 
 A template library for Fast Fourier Transform.
 
+Quick example
+===
+
+This is a code snipper from `explamples/ex01.cpp`
+```
+...
+using cd = std::complex<double>;
+const cd I2Pi = cd{0.0, 1.0} * 2.0 * std::acos(-1.0);
+
+std::vector<cd> A{1.0, 2.0, 3.0, 4.0};
+
+auto FT_A = fftx::FFT_Iterative(A, std::exp(I2Pi * (-1.0 / A.size())));
+...
+```
+It can be built manually with 
+```
+g++ -std=c++17 examples/ex01.cpp -o ex01 -I include
+```
+
+
 Dependencies
 ===
-- [Boost](https://www.boost.org/)
-- [FFTW](http://fftw.org/)
-- [google/benchmark](https://github.com/google/benchmark)
-- [alglib](https://www.alglib.net/)
+
+None actually. This is header only library.
+
+The following dependencies are needed for building the unit tests:
 - [meson](https://mesonbuild.com/)
+- [Boost](https://www.boost.org/)
+
+these following libraries are optional, they are needed for the benchmarks:
+- [google/benchmark](https://github.com/google/benchmark)
+- [FFTW](http://fftw.org/)
+- [alglib](https://www.alglib.net/)
 
 How to use this repository
 ===

@@ -8,10 +8,12 @@ cpp=meson.get_compiler('cpp')
 
 headers=[]
 test_src=[]
+example_src=[]
 
 subdir('include')
 subdir('tests')
 subdir('benchmarks')
+subdir('examples')
 
 _format = find_program('clang-format', required:false)
 pkg=import('pkgconfig')
@@ -27,5 +29,5 @@ pkg.generate(fftx_lib,
     description: 'Library for FFT')
 
 if (_format.found())
-  run_target('format', command: [_format, '-i', headers,test_src])
+  run_target('format', command: [_format, '-i', headers,test_src,example_src])
 endif
