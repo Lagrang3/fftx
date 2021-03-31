@@ -131,16 +131,16 @@ int main()
     auto FT_A = fftx::FFT_Iterative(A, w);
     auto FT_B = fftx::FFT_Iterative(B, w);
 
-    // convolution
+    // convolution in Fourier space
     std::vector<M_int> FT_AB;
     std::transform(FT_A.begin(), FT_A.end(), FT_B.begin(),
                    std::back_inserter(FT_AB),
                    [](M_int x, M_int y) { return x * y; });
 
+    // backwards FFT
     auto AB = fftx::FFT_Iterative(FT_AB, w.inverse());
     std::transform(AB.begin(), AB.end(), AB.begin(),
                    [&inv_8](M_int x) { return x * inv_8; });
-    // print(AB);
 
     // carry the remainders in base 10
     std::vector<M_int> C;
