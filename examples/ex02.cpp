@@ -140,7 +140,7 @@ int main()
     auto AB = fftx::FFT_Iterative(FT_AB, w.inverse());
     std::transform(AB.begin(), AB.end(), AB.begin(),
                    [&inv_8](M_int x) { return x * inv_8; });
-    print(AB);
+    // print(AB);
 
     // carry the remainders in base 10
     std::vector<M_int> C;
