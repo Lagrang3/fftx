@@ -8,6 +8,8 @@
 #include <numeric>
 #include <vector>
 
+#include "modulo.h"
+
 template <class T>
 void print(const std::vector<T>& V)
 {
