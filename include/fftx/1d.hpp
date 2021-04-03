@@ -28,7 +28,7 @@ namespace fftx
         T ei = _1;
         for (int i = 0; i < n; ++i)
         {
-            T b = 0;
+            T b{0};
             for (int j = n - 1; j >= 0; --j)
             {
                 b = b * ei + A[j];
@@ -140,7 +140,7 @@ namespace fftx
                 T ej = _1;
                 for (int j = 0; j < len; ++j, ej *= e2)
                 {
-                    T b = 0;
+                    T b{0};
                     for (int k = p - 1; k >= 0; --k)
                     {
                         b = b * ej + B_old[i + k * len_old + j % len_old];
@@ -183,7 +183,7 @@ namespace fftx
         T ek = _1;
         for (int k = 0; k < n; ++k)
         {
-            T b = 0;
+            T b{0};
             for (int i = p - 1; i >= 0; --i)
             {
                 b = b * ek + A_sub[i][k % m];

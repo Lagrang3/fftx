@@ -48,12 +48,14 @@ namespace my_modulo_lib
        public:
         constexpr mint() : x{0} {}
 
-        mint(integer _x) : x{_x}
+        template <typename int_type>
+        mint(int_type _x) : x{_x}
         {
             x %= Field::mod;
             if (x < 0)
                 x += Field::mod;
         }
+
         mint(const mint& that) : x{that.x} {}
 
         mint& operator=(const mint& that) { return x = that.x, *this; }
@@ -72,6 +74,8 @@ namespace my_modulo_lib
             x = (x * t.x) % Field::mod;
             return *this;
         }
+        bool operator==(const mint& that) const { return x == that.x; }
+        bool operator!=(const mint& that) const { return x != that.x; }
 
         auto inverse() const { return power(*this, Field::mod - 2); }
 
